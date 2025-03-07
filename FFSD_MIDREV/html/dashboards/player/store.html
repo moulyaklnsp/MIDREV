@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChessHive Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../css/primary_styles.css">
+</head>
+<body>
+    <div class="container">
+    <h2 class="black-h2">ChessHive Store</h2>
+    
+    <!-- Wallet Section -->
+    <div class="wallet-section">
+        <h3 class="black-h2">Wallet Balance: $<span id="walletBalance">100</span></h3>
+        <div class="store">
+            <button class="store-button" onclick="addFunds()">Add Funds</button>
+        </div>
+    </div>
+    
+    <!-- Store Products Section -->
+    <div class="store-items" id="chesshiveProducts"></div>
+</div>
+    
+    <script src="wallet.js"></script>
+    <script src="store.js"></script> <!-- Ensure products load from localStorage -->
+</body>
+</html>

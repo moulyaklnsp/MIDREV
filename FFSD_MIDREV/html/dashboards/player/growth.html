@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Analytics - ChessHive</title>
+    <link rel="stylesheet" href="../../../css/primary_styles.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+
+
+     <!-- <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 20px;
+        background:rgba(255,255,0,0.8) ;
+        border-radius: 10px;
+        }
+        h2 {
+            text-align: center;
+            color: black;
+        }
+        .black-h2 {
+        color: black;
+        }
+ 
+        .stats {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 15px;
+        background:rgba(0,0,0,0.9);
+        border-radius: 8px;
+        margin-bottom: 20px;
+        }
+        .stats p {
+            flex: 1 1 45%;
+            font-size: 16px;
+            text-align: center;
+            background: rgba(255,255,0,0.8);
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .chart-container {
+            background: rgb(0,0,0,0.9);
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+        }
+        @media (max-width: 768px), (max-width: 480px) {
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            .stats p {
+                flex: 1 1 100%;
+                width: 90%;
+                font-size: 14px;
+                padding: 4px;
+            }
+        }
+    </style>   -->
+
+</head>
+<body>
+    <div class="container">
+        <h2 class="black-h2">Player Growth Analytics</h2>
+
+        <!-- Growth Statistics -->
+        <div class="stats">
+            <p><strong>Recent Matches:</strong> 12</p>
+            <p><strong>Win Rate:</strong> 75%</p>
+            <p><strong>Current Rating:</strong> 1850</p>
+            <p><strong>Peak Rating:</strong> 1900</p>
+        </div>
+
+        <!-- Performance Graph -->
+        <div class="chart-container">
+            <canvas id="growthChart"></canvas>
+        </div>
+
+        <div class="back-container form-container">
+            <a href="../../dashboards/player_dashboard.html" class="back">Back to Dashboard</a>
+        </div>
+        
+    </div>
+
+    <script>
+        function applyMediaQueries() {
+            let width = window.innerWidth;
+            let statsContainer = document.querySelector('.stats');
+            if (width <= 768) {
+                statsContainer.style.flexDirection = 'column';
+                statsContainer.style.alignItems = 'center';
+            } else {
+                statsContainer.style.flexDirection = 'row';
+                statsContainer.style.alignItems = 'stretch';
+            }
+        }
+        
+        window.addEventListener('resize', applyMediaQueries);
+        window.addEventListener('DOMContentLoaded', applyMediaQueries);
+        
+        var ctx = document.getElementById('growthChart').getContext('2d');
+        var growthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Rating Progress',
+                    data: [1700, 1750, 1800, 1780, 1850, 1900],
+                    borderColor: 'yellow',
+                    backgroundColor: 'rgba(255, 255, 0, 0.2)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 1600,
+                        max: 2000,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'white'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Dashboard - ChessHive</title>
+    <link rel="stylesheet" href="../../css/primary_styles.css">
+
+    <!-- <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;     
+            font-family: "Archivo Black", Arial, sans-serif;
+            background-image: url('../../images/background_image.png'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .secondary-header {
+            text-align: center;
+            font-size: 1.5rem;
+            color: yellow;
+            padding: 10px;
+            background-color: transparent;
+        }
+
+        .dashboard {
+            background: transaparent;
+            padding: 20px;
+            width: 80%;
+            margin: 10px auto;
+            border-radius: 10px;
+
+        }
+        .dashboard-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .dashboard-links a {
+            display: inline-block;
+            width: 90%;
+            padding: 10px;
+            background-color: yellow;
+            color: black;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .dashboard-links a:hover {
+            background-color: #0056b3;
+        }
+        .logout-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding:15px;
+        }
+
+        button {
+            background-color: yellow;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            .content-box {
+                flex-direction: column;
+            }
+            footer {
+            flex-direction: column;
+            padding: 20px 10px;
+            text-align: center;
+            height: auto;
+            line-height: normal;
+            }
+        }
+        @media (max-width: 480px) {
+            header {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>  -->
+
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="dashboard-links">
+            <h2 class="secondary-header">Player Dashboard</h2>
+            <a href="player/growth.html">Growth Tracking</a>
+            <a href="player/player_tournament.html">Tournaments</a>
+            <a href="player/one_on_one.html">One-on-One Matches</a>
+            <a href="player/subscription.html">Manage Subscription</a>
+            <a href="player/store.html">E-Commerce Store</a>
+            <a href="player/chat.html">Chat</a>
+            <a href="player/player_profile.html">Profile</a>
+        </nav>
+        <div class="logout-box">
+            <button  onclick="redirectToLogin()">Log Out</button>
+            
+        </div>
+    </div>
+    <script>
+        function redirectToLogin() {
+            window.location.href = "../login.html";
+        }
+    </script>
+</body>
+</html>

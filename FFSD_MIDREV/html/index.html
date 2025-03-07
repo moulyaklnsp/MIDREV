@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Hive</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/primary_styles.css">
+
+    <!-- <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-image: url('background_image.png'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        header {
+            background-color: black;
+            color: yellow;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+            padding: 0 40px;
+            font-family: "Archivo",Arial, sans-serif;
+        }
+        .secondary-header {
+            text-align: center;
+            font-size: 1.5rem;
+            color: yellow;
+            padding: 10px;
+            background-color: transparent;
+        }
+        nav {
+            display: flex;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links li {
+            display: inline;
+        }
+        .nav-links a {
+            color: yellow;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        .content-box {
+            display: flex;
+            flex-direction: column;
+            flex: 0.5;
+            background-color: transparent;
+            align-items: center;
+            justify-content: center;
+            padding: 100px;
+            text-align: center;
+        }
+        .content-box .left-inner-box {
+            font-size: 1.2rem;
+            color: yellow;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+        }
+         .content-box .right-inner-box:first-child {
+            flex: 0.3;
+            background-color: transparent;
+            margin: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: yellow;
+        }
+         .content-box .right-inner-box:last-child {
+            flex: 0.7;
+            background-color: transparent;
+            margin: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: row;
+        }
+         .content-box .right-inner-box:last-child .sub-box {
+            flex: 1;
+            background-color: transparent;
+            margin: 5px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+        .sub-box .sub-feature-upper {
+            flex: 0.5;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sub-feature-upper img {
+            width: 100px;
+            height: 100px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+        }
+        .sub-box .sub-feature-lower {
+            flex: 0.5;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.75rem;
+            word-wrap: break-word;
+        }
+        footer {
+            background-color: black;
+            color: yellow;
+            text-align: center;
+            height: 30px;
+            line-height: 30px;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            margin-top: auto;
+        }
+        .social-links a {
+            color: yellow;
+            margin: 0 10px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        button {
+            background-color: yellow;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+
+            .content-box {
+                flex-direction: column;
+            }
+
+            .content-box .inner-box {
+                font-size: 1rem;
+            }
+
+            .content-box .right-inner-box {
+                flex: 1;
+                flex-direction: column;
+            }
+
+            .content-box .right-inner-box:last-child {
+                flex-direction: column;
+            }
+
+            .sub-box {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            footer {
+            flex-direction: column;
+            padding: 20px 10px;
+            text-align: center;
+            height: auto;
+            line-height: normal;
+            }
+            .social-links {
+            margin-top: 10px;
+            flex-direction: column;
+            gap: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            header {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-links li {
+                text-align: center;
+            }
+
+            footer {
+            padding: 20px 10px;
+        }
+
+            .social-links a {
+                font-size: 1rem;
+            }
+        }
+    </style> -->
+
+</head>
+<body>
+    <header>
+        <h1>Chess Hive</h1>
+        
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#" onclick="event.preventDefault();">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html">Join Community</a></li>
+                <li><a href="contactus.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="secondary-header">Bringing Chess Passionates from Campuses to the Board</div>
+    <main>
+        <div class="content-box">
+            <div class="left-inner-box">
+                Ready to take your love for chess to the next level by engaging in exciting competitions, meeting new opponents, and refining your strategies with the best campus players?<br><br>
+                <button onclick="redirectToLogin()">Sign Up</button>
+            </div>
+        </div>
+        <div class="content-box">
+            <div class="right-inner-box">
+                <div class="sub-box">
+                    <div class="sub-feature-upper"><img src="../images/profilepic.png" alt="Feature 1"></div>
+                    <div class="sub-feature-lower">⭐⭐⭐⭐⭐<br>"As a college chess player, I’ve been searching for a community like this for ages.Bringing masters together made me improve my skills like never before"</div>
+                </div>
+                <div class="sub-box">
+                    <div class="sub-feature-upper"><img src="../images/profilepic.png" alt="Feature 2"></div>
+                    <div class="sub-feature-lower">⭐⭐⭐⭐⭐<br>"I never knew how much fun chess could be until I joined Chess Hive! It's the perfect place to improve your game, challenge players from other colleges, and stay up to date with upcoming tournaments."</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div>
+            <p>&copy; 2025 Chess Hive</p>
+        </div>
+        <nav class="social-links">
+            <a href="#">Facebook</a> 
+            <a href="#">Twitter</a>  
+            <a href="#">Instagram</a>
+        </nav>
+    </footer>
+    <script>
+        function redirectToLogin() {
+          window.location.href = "signup.html";
+        }
+      </script>
+</body>
+</html>
