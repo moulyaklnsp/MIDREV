@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Hive</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/primary_styles.css">
+</head>
+<body>
+    <header>
+        <h1>Chess Hive</h1>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/" onclick="event.preventDefault();">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/login">Join Community</a></li>
+                <li><a href="/contactus">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="secondary-header">Bringing Chess Passionates from Campuses to the Board</div>
+    
+    <main>
+        <div class="content-box">
+            <div class="left-inner-box">
+                Ready to take your love for chess to the next level by engaging in exciting competitions, meeting new opponents, and refining your strategies with the best campus players?<br><br>
+                <button onclick="redirectToLogin()">Sign Up</button>
+            </div>
+        </div>
+        
+        <div class="content-box">
+            <div class="right-inner-box">
+                <div class="sub-box">
+                    <div class="sub-feature-upper">
+                        <img src="/images/profilepic.png" alt="Feature 1">
+                    </div>
+                    <div class="sub-feature-lower">
+                        ⭐⭐⭐⭐⭐<br>
+                        "As a college chess player, I’ve been searching for a community like this for ages. Bringing masters together made me improve my skills like never before"
+                    </div>
+                </div>
+                <div class="sub-box">
+                    <div class="sub-feature-upper">
+                        <img src="/images/profilepic.png" alt="Feature 2">
+                    </div>
+                    <div class="sub-feature-lower">
+                        ⭐⭐⭐⭐⭐<br>
+                        "I never knew how much fun chess could be until I joined Chess Hive! It's the perfect place to improve your game, challenge players from other colleges, and stay up to date with upcoming tournaments."
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div>
+            <p>&copy; <%= new Date().getFullYear() %> Chess Hive</p>
+        </div>
+        <nav class="social-links">
+            <a href="#">Facebook</a> 
+            <a href="#">Twitter</a>  
+            <a href="#">Instagram</a>
+        </nav>
+    </footer>
+
+    <script>
+        function redirectToLogin() {
+          window.location.href = "/signup";
+        }
+    </script>
+</body>
+</html>

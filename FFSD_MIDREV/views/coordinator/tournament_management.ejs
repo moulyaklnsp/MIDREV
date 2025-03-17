@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Dashboard - ChessHive</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/primary_styles.css">
+    <script src="/js/tournament.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2 class="black-h2">Coordinator Dashboard</h2>
+
+        <!-- Add/Edit Tournament Form -->
+        <div class="table-div" id="tournamentFormSection">
+            <h3 id="formTitle">Add New Tournament</h3>
+
+            <form class="form-container" id="tournamentForm" onsubmit="return handleTournamentForm(event)">
+                <input type="hidden" id="tournamentId">
+                
+                <label for="tournamentName">Tournament Name:</label>
+                <input type="text" id="tournamentName" required>
+
+                <label for="tournamentDate">Date:</label>
+                <input type="date" id="tournamentDate" required>
+
+                <label for="tournamentLocation">Location:</label>
+                <input type="text" id="tournamentLocation" required>
+
+                <label for="entryFee">Entry Fee ($):</label>
+                <input type="number" id="entryFee" min="0" step="0.01" required>
+
+                <button type="submit" id="submitButton">Add Tournament</button>
+
+                <button type="button" id="cancelButton" class="hidden" onclick="cancelEdit()">Cancel</button>
+            </form>
+        </div>
+
+        <!-- Tournament List -->
+        <div class="table-div" id="tournamentListSection">
+            <h3>Your Tournaments</h3>
+            <h4>Tournaments you've submitted will appear here with their approval status</h4>
+            <div id="Coordinator_tournamentTable">
+                <!-- Tournament rows will be populated dynamically -->
+            </div>
+            <div class="back-container">
+                <a href="/coordinator/coordinator_dashboard" class="back">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Management</title> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/primary_styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="black-h2">Organizer Management</h2>
+        <div class="table-div">
+            <table id="organizerTable">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>College</th>
+                    <th>Actions</th>
+                </tr>
+                <% organizers.forEach(organizer => { %>
+                <tr>
+                    <td><%= organizer.name %></td>
+                    <td><%= organizer.email %></td>
+                    <td><%= organizer.college %></td>
+                    <td>
+                        <button class="edit" onclick="editRow(this)">Edit</button>
+                        <button class="remove" onclick="removeRow(this)">Remove</button>
+                    </td>
+                </tr>
+                <% }); %>
+            </table>
+            <div class="back-container">
+                <a href="/admin_dashboard" class="back">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/routes/organizer_management.js"> </script>
+</body>
+</html>

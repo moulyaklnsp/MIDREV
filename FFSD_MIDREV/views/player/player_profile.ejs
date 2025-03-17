@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Profile</title>
+    <link rel="stylesheet" href="/css/primary_styles.css">
+    <script src="/js/wallet.js"></script>
+</head>
+<body>
+    <header class="header-player-profile">
+        <h1>Player Profile</h1>
+    </header>
+    <div class="container-player-profile">
+        <h2 class="black-h2">Personal Details</h2>
+        <div class="form-container">
+            <section class="profile-info">
+                <p><strong>Name:</strong> <span id="player-name"><%= player.name %></span></p>
+                <p><strong>Email:</strong> <span id="player-email"><%= player.email %></span></p>
+                <p><strong>Phone:</strong> <span id="player-phone"><%= player.phone %></span></p>
+                <p><strong>FIDE ID:</strong> <span id="fide-id"><%= player.fideId %></span></p>
+                <p><strong>AICF ID:</strong> <span id="aicf-id"><%= player.aicfId %></span></p>
+                <p><strong>Subscription Level:</strong> <span id="subscription-level"><%= player.subscription %></span></p>
+                <button id="edit-profile">Edit Profile</button>
+                <div id="edit-form" style="display: none;">
+                    <input type="text" id="edit-name" placeholder="Enter Name">
+                    <input type="email" id="edit-email" placeholder="Enter Email">
+                    <input type="text" id="edit-phone" placeholder="Enter Phone Number">
+                    <select id="edit-subscription">
+                        <option value="Basic Plan">Basic Plan</option>
+                        <option value="Premium Plan">Premium Plan</option>
+                    </select>
+                    <button id="save-profile">Save</button>
+                </div>
+            </section>
+            <section>
+                <h2>Player Stats</h2>
+                <p><strong>Wins:</strong> <span id="wins"><%= player.wins %></span></p>
+                <p><strong>Losses:</strong> <span id="losses"><%= player.losses %></span></p>
+                <p><strong>Win Rate:</strong> <span id="winrate"><%= player.winRate %></span></p>
+            </section>
+            <section class="wallet">
+                <h2>Wallet</h2>
+                <p><strong>Balance:</strong> $<span id="wallet-balance"><%= player.walletBalance %></span></p>
+            </section>
+            <section class="purchases">
+                <h2>Items Purchased</h2>
+                <ul id="items-list">
+                    <% player.purchases.forEach(item => { %>
+                        <li><%= item %></li>
+                    <% }); %>
+                </ul>
+            </section>
+            <section class="tournaments">
+                <h2>Enrolled Tournaments</h2>
+                <ul id="tournament-list">
+                    <% player.tournaments.forEach(tournament => { %>
+                        <li class="player-profile"><%= tournament %></li>
+                    <% }); %>
+                </ul>
+            </section>
+        </div>
+        <div class="form-container back-container">
+            <a href="/player/player_dashboard" class="back">Back to Dashboard</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('edit-profile').addEventListener('click', function() {
+            document.getElementById('edit-form').style.display = 'block';
+        });
+        document.getElementById('save-profile').addEventListener('click', function() {
+            var newName = document.getElementById('edit-name').value;
+            var newEmail = document.getElementById('edit-email').value;
+            var newPhone = document.getElementById('edit-phone').value;
+            var newSubscription = document.getElementById('edit-subscription').value;
+            if (newName) document.getElementById('player-name').textContent = newName;
+            if (newEmail) document.getElementById('player-email').textContent = newEmail;
+            if (newPhone) document.getElementById('player-phone').textContent = newPhone;
+            if (newSubscription) document.getElementById('subscription-level').textContent = newSubscription;
+            document.getElementById('edit-form').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

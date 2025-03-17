@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments & Subscriptions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/primary_styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="black-h2">Manage Payments & Subscriptions</h2>
+        <div class="table-div">
+            <table>
+                <tr>
+                    <th>Player Name</th>
+                    <th>Subscription Level</th>
+                    <th>Payment Status</th>
+                    <th>Actions</th>
+                </tr>
+                <% players.forEach(player => { %>
+                    <tr>
+                        <td><%= player.name %></td>
+                        <td>Level <%= player.subscriptionLevel %></td>
+                        <td><%= player.paymentStatus %></td>
+                        <td><button class="view">View Details</button></td>
+                    </tr>
+                <% }); %>
+            </table>
+            <div class="back-container">
+                <a href="/admin_dashboard" class="back">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

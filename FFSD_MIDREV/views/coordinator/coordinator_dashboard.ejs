@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Dashboard - ChessHive</title>  
+    <link rel="stylesheet" href="/css/primary_styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="dashboard-links">
+            <h2 class="secondary-header">Coordinator Dashboard</h2>
+            <a href="/coordinator/coordinator_profile">Profile Page</a>
+            <a href="/coordinator/tournament_management">Manage Tournaments</a>
+            <a href="/coordinator/player_stats">Player Stats</a>
+            <a href="/coordinator/store_management">Manage Store</a>
+            <a href="/coordinator/coordinator_meetings">Meetings</a>
+            <a href="/coordinator/coordinator_chat">Chat</a>
+        </nav>
+        <div class="logout-box">
+            <button onclick="redirectToLogin()">Log Out</button>
+        </div>
+    </div>
+
+    <script>
+        function redirectToLogin() {
+            window.location.href = "/login";
+        }
+    </script>
+</body>
+</html>

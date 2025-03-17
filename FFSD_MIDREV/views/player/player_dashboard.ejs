@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Dashboard - ChessHive</title>
+    <link rel="stylesheet" href="/css/primary_styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="dashboard-links">
+            <h2 class="secondary-header">Player Dashboard</h2>
+            <a href="/player/player_profile">Profile</a>
+            <a href="/player/growth">Growth Tracking</a>
+            <a href="/player/player_tournament">Tournaments</a>
+            <a href="/player/one_on_one">One-on-One Matches</a>
+            <a href="/player/subscription">Manage Subscription</a>
+            <a href="/player/store">E-Commerce Store</a>
+            <a href="/player/player_chat">Chat</a>
+        </nav>
+        <div class="logout-box">
+            <button onclick="redirectToLogin()">Log Out</button>
+        </div>
+    </div>
+
+    <script>
+        function redirectToLogin() {
+            window.location.href = "/login";
+        }
+    </script>
+</body>
+</html>

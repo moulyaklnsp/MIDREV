@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Subscription - ChessHive</title>
+    <link rel="stylesheet" href="/css/primary_styles.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+
+    <script src="/js/wallet.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2 class="black-h2">Manage Subscription</h2>
+
+        <!-- Wallet Section -->
+        <div class="table-div">
+            <h3>Wallet Balance: $<span id="walletBalance"><%= walletBalance %></span></h3>
+            <button onclick="addFunds()">Add Funds</button>
+        </div>
+
+        <!-- Subscription Plans -->
+        <div class="form-container">
+            <div class="table-div">
+                <h3>Basic Plan</h3>
+                <p>Access to tournaments and player stats.</p>
+                <p>Price: $15/month</p>
+                <button onclick="purchaseSubscription(15)">Subscribe</button>
+            </div>
+            <div class="table-div">
+                <h3>Premium Plan</h3>
+                <p>Includes exclusive features, discounts, and priority support.</p>
+                <p>Price: $30/month</p>
+                <button onclick="purchaseSubscription(30)">Subscribe</button>
+            </div>
+        </div>
+
+        <div class="form-container back-container">
+            <a href="/player/player_dashboard" class="back">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

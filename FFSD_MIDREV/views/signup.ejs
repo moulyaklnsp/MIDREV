@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - ChessHive</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+
+    <!-- Linking External CSS -->
+    <link rel="stylesheet" href="/css/primary_styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>Chess Hive</h1>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/login">Join Community</a></li>
+                <li><a href="/contactus">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<main>
+    <!-- Signup Form Container -->
+    <div class="form-container">
+        <div class="form-box signupForm">
+        <h2>Create Your Account</h2>
+
+        <!-- ✅ Signup Form -->
+        <form id="signupForm" action="/signup" method="POST">
+            <!-- Full Name -->
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" 
+            value="<%= typeof name !== 'undefined' ? name : '' %>" required>
+            <span id="nameError" class="error">
+                <%= typeof errors !== 'undefined' && errors.name ? errors.name : '' %>
+            </span>
+
+            <!-- Date of Birth -->
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" 
+            value="<%= typeof dob !== 'undefined' ? dob : '' %>" required>
+            <span id="dobError" class="error">
+                <%= typeof errors !== 'undefined' && errors.dob ? errors.dob : '' %>
+            </span>
+
+            <!-- Gender -->
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="male" <%= (typeof gender !== 'undefined' && gender === 'male') ? 'selected' : '' %>>Male</option>
+                <option value="female" <%= (typeof gender !== 'undefined' && gender === 'female') ? 'selected' : '' %>>Female</option>
+                <option value="other" <%= (typeof gender !== 'undefined' && gender === 'other') ? 'selected' : '' %>>Other</option>
+            </select>
+            <span id="genderError" class="error">
+                <%= typeof errors !== 'undefined' && errors.gender ? errors.gender : '' %>
+            </span>
+
+            <!-- College Name -->
+            <label for="college">College Name:</label>
+            <input type="text" id="college" name="college" 
+            value="<%= typeof college !== 'undefined' ? college : '' %>" required>
+            <span id="collegeError" class="error">
+                <%= typeof errors !== 'undefined' && errors.college ? errors.college : '' %>
+            </span>
+
+            <!-- Email ID -->
+            <label for="email">Email ID:</label>
+            <input type="email" id="email" name="email" 
+            value="<%= typeof email !== 'undefined' ? email : '' %>" required>
+            <span id="emailError" class="error">
+                <%= typeof errors !== 'undefined' && errors.email ? errors.email : '' %>
+            </span>
+
+            <!-- Phone Number -->
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone" 
+            value="<%= typeof phone !== 'undefined' ? phone : '' %>" required>
+            <span id="phoneError" class="error">
+                <%= typeof errors !== 'undefined' && errors.phone ? errors.phone : '' %>
+            </span>
+
+            <!-- Password -->
+            <label for="password">Password:</label>
+            <div class="password-container">
+                <input type="password" id="password" name="password" required>
+                <span id="togglePassword" style="cursor: pointer;">
+                    <!-- Eye Open SVG (Show Password) -->
+                    <svg id="eyeOpen" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline;">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <!-- Eye Closed SVG (Hide Password) -->
+                    <svg id="eyeClosed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                </span>
+                <span id="passwordError" class="error">
+                    <%= typeof errors !== 'undefined' && errors.password ? errors.password : '' %>
+                </span>
+            </div>
+
+            <!-- Role -->
+            <label for="role">Select Role:</label>
+            <select id="role" name="role" required> <!-- Added required attribute -->
+                <option value="" disabled <%= (typeof role === 'undefined' || role === '') ? 'selected' : '' %>>Select Role</option>
+                <option value="admin" <%= (typeof role !== 'undefined' && role === 'admin') ? 'selected' : '' %>>Admin</option>
+                <option value="organizer" <%= (typeof role !== 'undefined' && role === 'organizer') ? 'selected' : '' %>>Organizer</option>
+                <option value="coordinator" <%= (typeof role !== 'undefined' && role === 'coordinator') ? 'selected' : '' %>>Coordinator</option>
+                <option value="player" <%= (typeof role !== 'undefined' && role === 'player') ? 'selected' : '' %>>Player</option>
+            </select>
+            <span id="roleError" class="error">
+                <%= typeof errors !== 'undefined' && errors.role ? errors.role : '' %>
+            </span>
+
+            <!-- Submit Button -->
+            <button type="submit">Sign Up</button> <!-- Removed onclick -->
+        </form>
+    </div>
+
+    <!-- Login Redirect -->
+    <div class="login-box">
+        <p>Already have an account?</p>
+        <button onclick="redirectToLogin()">Login</button>
+    </div>
+    </div>
+</main>
+
+<!-- Footer Section -->
+<footer>
+    <div>
+        <p>© <%= new Date().getFullYear() %> Chess Hive</p>
+    </div>
+    <nav class="social-links">
+        <a href="#">Facebook</a> 
+        <a href="#">Twitter</a>  
+        <a href="#">Instagram</a>
+    </nav>
+</footer>
+
+<script>
+    function redirectToLogin() {
+        window.location.href = "/login";
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission until validation passes
+
+        let isValid = true;
+        document.querySelectorAll('.error').forEach(e => e.innerText = '');
+
+        let name = document.getElementById('name');
+        let dob = document.getElementById('dob');
+        let gender = document.getElementById('gender');
+        let college = document.getElementById('college');
+        let email = document.getElementById('email');
+        let phone = document.getElementById('phone');
+        let password = document.getElementById('password');
+        let role = document.getElementById('role');
+
+        // Name validation
+        if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(name.value)) {
+            document.getElementById('nameError').innerText = "Name should only contain letters.";
+            isValid = false;
+        }
+
+        // Date of Birth validation
+        let birthDate = new Date(dob.value);
+        let today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        if (today.getMonth() < birthDate.getMonth() || 
+            (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age < 16) {
+            document.getElementById('dobError').innerText = "You must be at least 16 years old.";
+            isValid = false;
+        }
+
+        // Email validation
+        if (!email.checkValidity()) {
+            document.getElementById('emailError').innerText = "Invalid email format.";
+            isValid = false;
+        }
+
+        // Phone validation
+        if (!/^[0-9]{10}$/.test(phone.value)) {
+            document.getElementById('phoneError').innerText = "Enter a valid 10-digit phone number.";
+            isValid = false;
+        }
+
+        // Password validation
+        let passwordErrors = [];
+        if (password.value.length < 8) passwordErrors.push("at least 8 characters");
+        if (!/[A-Z]/.test(password.value)) passwordErrors.push("one uppercase letter");
+        if (!/[0-9]/.test(password.value)) passwordErrors.push("one number");
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password.value)) passwordErrors.push("one special character");
+
+        if (passwordErrors.length > 0) {
+            document.getElementById('passwordError').innerText = "Password must have: " + passwordErrors.join(", ");
+            isValid = false;
+        }
+
+        // Role validation
+        if (!role.value) {
+            document.getElementById('roleError').innerText = "Please select a role.";
+            isValid = false;
+        }
+
+        // If all validations pass, submit the form
+        if (isValid) {
+            this.submit(); // Programmatically submit the form
+        }
+    });
+
+    // Password toggle functionality with SVG icons
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        let passwordInput = document.getElementById('password');
+        let eyeOpen = document.getElementById('eyeOpen');
+        let eyeClosed = document.getElementById('eyeClosed');
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeOpen.style.display = "none";
+            eyeClosed.style.display = "inline";
+        } else {
+            passwordInput.type = "password";
+            eyeOpen.style.display = "inline";
+            eyeClosed.style.display = "none";
+        }
+    });
+</script>
+</body>
+</html>

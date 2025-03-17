@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Dashboard - ChessHive</title>
+    <link rel="stylesheet" href="/css/primary_styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="dashboard-links">
+            <h2 class="secondary-header">Organizer Dashboard</h2>
+            <a href="/organizer/organizer_profile">Profile Page</a>
+            <a href="/organizer/coordinator_management">Manage Coordinators</a>
+            <a href="/organizer/organizer_tournament">Tournament Oversight</a>
+            <a href="/organizer/college_stats">College Performance Stats</a>
+            <a href="/organizer/store_monitoring">Store Monitoring</a>
+            <a href="/organizer/meetings">Schedule Meetings</a>
+            <a href="/organizer/chat">Chat</a>
+        </nav>
+        <div class="logout-box">
+            <button onclick="redirectToLogin()">Log Out</button>
+        </div>
+    </div>
+    <script>
+        function redirectToLogin() {
+            window.location.href = "/login";
+        }
+    </script>
+</body>
+</html>

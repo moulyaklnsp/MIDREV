@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/primary_styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Coordinator Profile</h1>
+        <div class="form-container">
+            <p><strong>Unique ID:</strong> <%= coordinator.id %></p>
+            <p><strong>Email:</strong> <%= coordinator.email %></p>
+            <p><strong>College:</strong> <%= coordinator.college %></p>
+
+            <div class="table-div">
+                <h2>Players Pending Approval</h2>
+                <table>
+                    <tr>
+                        <th>Player Name</th>
+                        <th>Game</th>
+                        <th>Approve</th>
+                    </tr>
+                    <% pendingPlayers.forEach(player => { %>
+                        <tr>
+                            <td><%= player.name %></td>
+                            <td><%= player.game %></td>
+                            <td><button class="approve-btn">Approve</button></td>
+                        </tr>
+                    <% }); %>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
