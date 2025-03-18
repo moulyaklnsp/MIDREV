@@ -15,17 +15,7 @@
 </head>
 <body>
     <!-- Header Section -->
-    <header>
-        <h1>Chess Hive</h1>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/login">Join Community</a></li>
-                <li><a href="/contactus">Contact Us</a></li>
-            </ul>
-        </nav>
-    </header>
+    <%- include('partials/signup/header') %>
 
 <main>
     <!-- Signup Form Container -->
@@ -91,19 +81,6 @@
             <label for="password">Password:</label>
             <div class="password-container">
                 <input type="password" id="password" name="password" required>
-                <span id="togglePassword" style="cursor: pointer;">
-                    <!-- Eye Open SVG (Show Password) -->
-                    <svg id="eyeOpen" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline;">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    <!-- Eye Closed SVG (Hide Password) -->
-                    <svg id="eyeClosed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
-                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                    </svg>
-                </span>
                 <span id="passwordError" class="error">
                     <%= typeof errors !== 'undefined' && errors.password ? errors.password : '' %>
                 </span>
@@ -111,7 +88,7 @@
 
             <!-- Role -->
             <label for="role">Select Role:</label>
-            <select id="role" name="role" required> <!-- Added required attribute -->
+            <select id="role" name="role">
                 <option value="" disabled <%= (typeof role === 'undefined' || role === '') ? 'selected' : '' %>>Select Role</option>
                 <option value="admin" <%= (typeof role !== 'undefined' && role === 'admin') ? 'selected' : '' %>>Admin</option>
                 <option value="organizer" <%= (typeof role !== 'undefined' && role === 'organizer') ? 'selected' : '' %>>Organizer</option>
@@ -121,9 +98,10 @@
             <span id="roleError" class="error">
                 <%= typeof errors !== 'undefined' && errors.role ? errors.role : '' %>
             </span>
+            
 
             <!-- Submit Button -->
-            <button type="submit">Sign Up</button> <!-- Removed onclick -->
+            <button type="submit" onclick="redirectToLogin()">Sign Up</button>
         </form>
     </div>
 
@@ -136,108 +114,93 @@
 </main>
 
 <!-- Footer Section -->
-<footer>
-    <div>
-        <p>© <%= new Date().getFullYear() %> Chess Hive</p>
-    </div>
-    <nav class="social-links">
-        <a href="#">Facebook</a> 
-        <a href="#">Twitter</a>  
-        <a href="#">Instagram</a>
-    </nav>
-</footer>
+<%- include('partials/signup/footer') %>
 
 <script>
     function redirectToLogin() {
         window.location.href = "/login";
-    }
-
+    }    
     document.getElementById('signupForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent form submission until validation passes
+            let isValid = true;
+            document.querySelectorAll('.error').forEach(e => e.innerText = '');
 
-        let isValid = true;
-        document.querySelectorAll('.error').forEach(e => e.innerText = '');
+            let name = document.getElementById('name');
+            let dob = document.getElementById('dob');
+            let gender = document.getElementById('gender');
+            let college = document.getElementById('college');
+            let email = document.getElementById('email');
+            let phone = document.getElementById('phone');
+            let password = document.getElementById('password');
+            let role = document.getElementById('role');
 
-        let name = document.getElementById('name');
-        let dob = document.getElementById('dob');
-        let gender = document.getElementById('gender');
-        let college = document.getElementById('college');
-        let email = document.getElementById('email');
-        let phone = document.getElementById('phone');
-        let password = document.getElementById('password');
-        let role = document.getElementById('role');
+            if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(name.value)) {
+                document.getElementById('nameError').innerText = "Name should only contain letters.";
+                isValid = false;
+            }
 
-        // Name validation
-        if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(name.value)) {
-            document.getElementById('nameError').innerText = "Name should only contain letters.";
-            isValid = false;
-        }
+            let birthDate = new Date(dob.value);
+            let today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            if (age < 16) {
+                document.getElementById('dobError').innerText = "You must be at least 16 years old.";
+                isValid = false;
+            }
+            if (!email.checkValidity()) {
+                document.getElementById('emailError').innerText = "Invalid email format.";
+                isValid = false;
+            }
+            if (!/^[0-9]{10}$/.test(phone.value)) {
+                document.getElementById('phoneError').innerText = "Enter a valid 10-digit phone number.";
+                isValid = false;
+            }
 
-        // Date of Birth validation
-        let birthDate = new Date(dob.value);
-        let today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        if (today.getMonth() < birthDate.getMonth() || 
-            (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        if (age < 16) {
-            document.getElementById('dobError').innerText = "You must be at least 16 years old.";
-            isValid = false;
-        }
+            let passwordErrors = [];
+            if (password.value.length < 8) passwordErrors.push("At least 8 characters");
+            if (!/[A-Z]/.test(password.value)) passwordErrors.push("One uppercase letter");
+            if (!/[0-9]/.test(password.value)) passwordErrors.push("One number");
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(password.value)) passwordErrors.push("One special character");
 
-        // Email validation
-        if (!email.checkValidity()) {
-            document.getElementById('emailError').innerText = "Invalid email format.";
-            isValid = false;
-        }
+            if (passwordErrors.length > 0) {
+                document.getElementById('passwordError').innerText = "Password must have: " + passwordErrors.join(", ");
+                isValid = false;
+            }
+            if (!isValid) {
+                event.preventDefault();
+            }
 
-        // Phone validation
-        if (!/^[0-9]{10}$/.test(phone.value)) {
-            document.getElementById('phoneError').innerText = "Enter a valid 10-digit phone number.";
-            isValid = false;
-        }
+            cosole.log(isValid);
 
-        // Password validation
-        let passwordErrors = [];
-        if (password.value.length < 8) passwordErrors.push("at least 8 characters");
-        if (!/[A-Z]/.test(password.value)) passwordErrors.push("one uppercase letter");
-        if (!/[0-9]/.test(password.value)) passwordErrors.push("one number");
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password.value)) passwordErrors.push("one special character");
+            if(isValid==true){
+                let role = document.getElementById('role').value;
+                let dashboard = {
+                    admin: "/admin_dashboard",
+                    organizer: "/organizer_dashboard",
+                    coordinator: "/coordinator_dashboard",
+                    player: "/player_dashboard"
+                };
+                window.location.href = dashboard[role] || "/player_dashboard";
+            }
 
-        if (passwordErrors.length > 0) {
-            document.getElementById('passwordError').innerText = "Password must have: " + passwordErrors.join(", ");
-            isValid = false;
-        }
+        });
 
-        // Role validation
-        if (!role.value) {
-            document.getElementById('roleError').innerText = "Please select a role.";
-            isValid = false;
-        }
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            let passwordInput = document.getElementById('password');
+            let eyeOpen = document.getElementById('eyeOpen');
+            let eyeClosed = document.getElementById('eyeClosed');
 
-        // If all validations pass, submit the form
-        if (isValid) {
-            this.submit(); // Programmatically submit the form
-        }
-    });
-
-    // Password toggle functionality with SVG icons
-    document.getElementById('togglePassword').addEventListener('click', function() {
-        let passwordInput = document.getElementById('password');
-        let eyeOpen = document.getElementById('eyeOpen');
-        let eyeClosed = document.getElementById('eyeClosed');
-
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            eyeOpen.style.display = "none";
-            eyeClosed.style.display = "inline";
-        } else {
-            passwordInput.type = "password";
-            eyeOpen.style.display = "inline";
-            eyeClosed.style.display = "none";
-        }
-    });
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeOpen.style.display = "none";
+                eyeClosed.style.display = "inline";
+            } else {
+                passwordInput.type = "password";
+                eyeOpen.style.display = "inline";
+                eyeClosed.style.display = "none";
+            }
+        });
 </script>
 </body>
 </html>

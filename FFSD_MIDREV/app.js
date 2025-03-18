@@ -1,16 +1,24 @@
 const express = require('express');
 const path = require('path');
 const ejs = require('ejs');
-
+const authrouter = require('./routes/auth');
+const db = require('./routes/databasecongi');
 const app = express();
 const PORT = 3000;
+const session = require('express-session');
 
+app.use(session({
+    secret: 'your_secret_key', // Replace with a secure key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set to true if using HTTPS
+}));
 // Array to store meetings data
 const meetings = [];
 
 // Add request logger middleware
 app.use((req, res, next) => {
-  console.log(`Request URL: ${req.url}`);
+//   console.log(`Request URL: ${req.url}`);
   next();
 });
 
@@ -75,33 +83,91 @@ app.get('/:role/:subpage', (req, res) => {
         return res.redirect('/?error-message=Invalid Role');
     }
 
-    console.log(`Rendering ${role}/${subpage}`);
+    console.log(`Rendering ${role}/${subpage}, Session Email: ${req.session.userEmail}`);
     let data = {};
 
-    // Handle Dynamic Data for Specific Pages
-    //admin_dashboard
+    // Handle coordinator_profile
+    if (subpage === "coordinator_profile" && role === "coordinator") {
+        if (!req.session.userEmail) {
+            console.log("No user email in session, redirecting to login");
+            return res.redirect('/?error-message=Please log in');
+        }
 
-    if (subpage === 'coordinator_management' && role === 'admin') {
-        data.coordinators = [
-            { name: "Jane Smith", email: "jane@example.com", college: "ABC Institute" },
-            { name: "John Doe", email: "john@example.com", college: "XYZ University" }
-        ];
+        db.get(
+            "SELECT id, email, college FROM users WHERE email = ? AND role = 'coordinator'",
+            [req.session.userEmail],
+            (err, row) => {
+                if (err) {
+                    console.error("Database Error:", err);
+                    return res.redirect('/coordinator_dashboard?error-message=Database Error');
+                }
+                if (!row) {
+                    console.log("No coordinator found for email:", req.session.userEmail);
+                    return res.redirect('/coordinator_dashboard?error-message=Coordinator not found');
+                }
+
+                console.log("Rendering coordinator_profile with data:", row);
+                res.render('coordinator/coordinator_profile', {
+                    coordinator: row,
+                    successMessage: req.query['success-message'],
+                    errorMessage: req.query['error-message']
+                });
+            }
+        );
+        return; // Stop further execution
     }
-
+    // Handle other async subpages
+    if (subpage === 'coordinator_management') {
+        db.all("SELECT name, email, college FROM users WHERE role = 'coordinator'", [], (err, rows) => {
+            if (err) {
+                console.error("Database Error:", err);
+                return res.redirect('/admin_dashboard?error-message=Database Error');
+            }
+            res.render(`${role}/${subpage}`, { 
+                successMessage: req.query['success-message'],
+                errorMessage: req.query['error-message'],
+                coordinators: rows
+            });
+        });
+        return;
+    }
     if (subpage === 'organizer_management' && role === 'admin') {
-        data.organizers = [
-            { name: "Alice Johnson", email: "alice@example.com", college: "DEF College" },
-            { name: "Bob Brown", email: "bob@example.com", college: "GHI University" }
-        ];
+        db.all("SELECT name, email, college FROM users WHERE role = 'organizer'", [], (err, rows) => {
+            if (err) {
+                console.error("Database Error:", err);
+                return res.redirect('/admin_dashboard?error-message=Database Error');
+            }
+            res.render(`${role}/${subpage}`, { 
+                successMessage: req.query['success-message'],
+                errorMessage: req.query['error-message'],
+                organizers: rows
+            });
+        });
+        return;
     }
-
+    // Handle synchronous subpages
     if (subpage === 'global_chat') {
         data.messages = [
             { sender: "John", text: "Hi everyone!" },
             { sender: "Jane", text: "Welcome to ChessHive!" }
         ];
     }
-
+    if (subpage === "player_profile") {
+        data.player = {
+            name: 'John Doe',
+            email: 'johndoe@example.com',
+            phone: '123-456-7890',
+            fideId: '12345678',
+            aicfId: '87654321',
+            subscriptionLevel: 'Basic Plan',
+            wins: 10,
+            losses: 5,
+            winRate: '66.67%',
+            walletBalance: '50.00',
+            purchases: ['Chess Set', 'Premium Membership'],
+            tournaments: ['National Open 2024', 'City Championship']
+        };
+    }
     if (subpage === 'payments') {
         data.players = [
             { name: "Michael Johnson", subscriptionLevel: 2, paymentStatus: "Paid" },
@@ -109,7 +175,45 @@ app.get('/:role/:subpage', (req, res) => {
             { name: "David Brown", subscriptionLevel: 1, paymentStatus: "Paid" }
         ];
     }
-
+    if (subpage === "coordinator_chat") {
+        data.users = [
+            { username: "John" },
+            { username: "Jane" }
+        ];
+        data.messages = [
+            { sender: "John", text: "Hi everyone!" },
+            { sender: "Jane", text: "Welcome to ChessHive!" }
+        ];
+        data.currentUser = "";
+    }
+    if (subpage === "coordinator_meetings") {
+        data.meetings = [
+            { title: "Strategy Session", date: "2025-03-20", time: "14:00", link: "#" }
+        ];
+    }
+    if (subpage === "player_stats") {
+        data.players = [
+            { name: "John Doe", gamesPlayed: 10, wins: 6, losses: 3, draws: 1, rating: 1500 },
+            { name: "Jane Smith", gamesPlayed: 8, wins: 4, losses: 2, draws: 2, rating: 1450 }
+        ];
+    }
+    if (subpage === "store") {
+        data.walletBalance= 100
+    }
+    if (subpage === "subscription") {
+        data.walletBalance= 100
+    }
+    if (subpage === "player_chat") {
+        data.users = [
+            { username: "John" },
+            { username: "Jane" }
+        ];
+        data.messages = [
+            { sender: "John", text: "Hi everyone!" },
+            { sender: "Jane", text: "Welcome to ChessHive!" }
+        ];
+        data.currentUser = ""; // Can be set dynamically when a user logs in
+    }
     //organizer_dashboard
     if (subpage === "chat") {
         data.users = [
@@ -122,7 +226,6 @@ app.get('/:role/:subpage', (req, res) => {
         ];
         data.currentUser = ""; // Can be set dynamically when a user logs in
     }
-
     if (subpage === 'college_stats') {
         console.log("Injecting College Stats Data");
 
@@ -144,21 +247,12 @@ app.get('/:role/:subpage', (req, res) => {
             blitz: ['College C', 'College B', 'College A']
         };
     }
-
-    if (subpage === 'coordinator_management') {
-        data.coordinators = [
-            { name: "John Doe", email: "john@example.com", college: "XYZ University" },
-            { name: "Jane Smith", email: "jane@example.com", college: "ABC Institute" }
-        ];
-    }
-
     if (subpage === 'meetings') {
         // Use the meetings array
         data.meetings = meetings.length > 0 ? meetings : [
             { title: "Strategy Session", date: "2025-03-20", time: "14:00", link: "#" }
         ];
     }
-
     if (subpage === 'organizer_profile') {
         data.organizer = {
             name: "John Doe",
@@ -167,84 +261,7 @@ app.get('/:role/:subpage', (req, res) => {
         };
     }
 
-    //coordinator_dashboard
-    if (subpage === "coordinator_chat") {
-        data.users = [
-            { username: "John" },
-            { username: "Jane" }
-        ];
-        data.messages = [
-            { sender: "John", text: "Hi everyone!" },
-            { sender: "Jane", text: "Welcome to ChessHive!" }
-        ];
-        data.currentUser = ""; // Can be set dynamically when a user logs in
-    }
-
-    if (subpage === "coordinator_profile") {
-        data.coordinator = {
-            id: "COORD12345",
-            email: "coordinator@example.com",
-            college: "XYZ University"
-        };
-    
-        data.pendingPlayers = [
-            { name: "John Doe", game: "Soccer" },
-            { name: "Jane Smith", game: "Basketball" }
-        ];
-    }
-
-    if (subpage === "coordinator_meetings") {
-        data.meetings = [
-            { title: "Strategy Session", date: "2025-03-20", time: "14:00", link: "#" }
-        ];
-    }
-
-    if (subpage === "player_stats") {
-        data.players = [
-            { name: "John Doe", gamesPlayed: 10, wins: 6, losses: 3, draws: 1, rating: 1500 },
-            { name: "Jane Smith", gamesPlayed: 8, wins: 4, losses: 2, draws: 2, rating: 1450 }
-        ];
-    }
-
-    //player_dashboard
-    if (subpage === "player_chat") {
-        data.users = [
-            { username: "John" },
-            { username: "Jane" }
-        ];
-        data.messages = [
-            { sender: "John", text: "Hi everyone!" },
-            { sender: "Jane", text: "Welcome to ChessHive!" }
-        ];
-        data.currentUser = ""; // Can be set dynamically when a user logs in
-    }
-
-    if (subpage === "player_profile") {
-        data.player = {
-            name: 'John Doe',
-            email: 'johndoe@example.com',
-            phone: '123-456-7890',
-            fideId: '12345678',
-            aicfId: '87654321',
-            subscriptionLevel: 'Basic Plan',
-            wins: 10,
-            losses: 5,
-            winRate: '66.67%',
-            walletBalance: '50.00',
-            purchases: ['Chess Set', 'Premium Membership'],
-            tournaments: ['National Open 2024', 'City Championship']
-        };
-    }
-
-    if (subpage === "store") {
-        data.walletBalance= 100
-    }
-
-    if (subpage === "subscription") {
-        data.walletBalance= 100
-    }
-
-    // Check if the template exists (you might need to implement this)
+    // Final render for unhandled synchronous subpages
     try {
         res.render(`${role}/${subpage}`, { 
             successMessage: req.query['success-message'],
@@ -252,26 +269,44 @@ app.get('/:role/:subpage', (req, res) => {
             ...data
         });
     } catch (err) {
-        console.error(`Error rendering template ${role}/${subpage}:`, err);
-        res.redirect(`/?error-message=Page not found: ${role}/${subpage}`);
+        console.error(`Error rendering ${role}/${subpage}:`, err);
+        res.redirect(`/${role}_dashboard?error-message=Page not found: ${subpage}`);
     }
 });
 
 // Handle Login Form (Redirects Admin & Organizer)
 app.post('/login', (req, res) => {
-    const { email, role } = req.body; // Assume role is sent in form data
-    console.log(`User Login: ${email}, Role: ${role}`);
+    const { email, password } = req.body;
 
-    if (role === 'admin') {
-        return res.redirect('/admin_dashboard?success-message=Admin Login Successful');
-    } else if (role === 'organizer') {
-        return res.redirect('/organizer_dashboard?success-message=Organizer Login Successful');
-    }else if (role === 'coordinator') {
-        return res.redirect('/coordinator_dashboard?success-message=Coordinator Login Successful');
-    }else if (role === 'player') {
-        return res.redirect('/player_dashboard?success-message=player Login Successful');
-    }
-    res.redirect('/?error-message=Invalid Role');
+    // Query the database for user with given email and password
+    db.get("SELECT * FROM users WHERE email = ? AND password = ?", [email, password], (err, user) => {
+        if (err) {
+            console.error("Database Error:", err);
+            return res.redirect('/?error-message=Database Error');
+        }
+
+        if (!user) {
+            return res.redirect('/login?error-message=Invalid credentials');
+        }
+
+        // Store the user's email in the session
+        req.session.userEmail = user.email;
+        console.log(`User Login: ${user.email}, Role: ${user.role}, Session set: ${req.session.userEmail}`);
+
+        // Redirect user based on role
+        switch (user.role) {
+            case 'admin':
+                return res.redirect('/admin_dashboard?success-message=Admin Login Successful');
+            case 'organizer':
+                return res.redirect('/organizer_dashboard?success-message=Organizer Login Successful');
+            case 'coordinator':
+                return res.redirect('/coordinator_dashboard?success-message=Coordinator Login Successful');
+            case 'player':
+                return res.redirect('/player_dashboard?success-message=Player Login Successful');
+            default:
+                return res.redirect('/?error-message=Invalid Role');
+        }
+    });
 });
 
 app.post("/meetings/schedule", (req, res) => {
@@ -286,21 +321,6 @@ app.post('/coordinator/coordinator_meetings/schedule', (req, res) => {
     // Ideally, store this data in a database. For now, log it.
     console.log("New Meeting Scheduled:", { title, date, time, link });
     res.redirect("/coordinator/coordinator_meetings?success-message=Meeting scheduled successfully");
-});
-
-app.post('/signup', (req, res) => {
-    const { name, dob, gender, college, email, phone, password, role } = req.body;
-
-    // Example: Save to database (pseudo-code)
-    try {
-        console.log("User signed up:", { name, email });
-        res.redirect('/login');
-    } catch (error) {
-        res.render('signup', {
-            errors: { email: "Email already exists" }, // Adjust based on actual error
-            name, dob, gender, college, email, phone, role
-        });
-    }
 });
 
 // Dynamic Route Handler for general pages (AFTER more specific routes)
@@ -323,6 +343,14 @@ app.get('/:page', (req, res) => {
         res.redirect(`/?error-message=Page not found: ${page}`);
     }
 });
+
+// app.post('/signup', (req, res) => {
+//     console.log("hi");
+//     console.log(req.body);
+// res.send("Form Submitted Successfully");
+// });
+
+app.use(authrouter);
 
 // Add a 404 handler for any unmatched routes
 app.use((req, res) => {

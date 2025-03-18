@@ -14,156 +14,48 @@
     <link rel="stylesheet" href="/css/primary_styles.css">
 </head>
 <body>
-    <!-- Header Section -->
-    <header>
-        <h1>Chess Hive</h1>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/login">Join Community</a></li>
-                <li><a href="/contactus">Contact Us</a></li>
-            </ul>
-        </nav>
-    </header>
 
-<main>
-    <!-- Login Form Container -->
-    <div class="form-container-login">
-        <div class="form-box loginForm">
-        <h2>Login to ChessHive</h2>
-        <form id="loginForm" action="/login" method="POST">
-            <!-- Email -->
-            <label for="email">Email ID:</label>
-            <input type="email" id="email" name="email" required>
-            <span id="emailError" class="error"></span>
+    <!-- Include Header Partial -->
+    <%- include('./partials/dashboards/login/header') %>
 
-            <!-- Password -->
-            <label for="password">Password:</label>
-            <div class="password-container">
-                <input type="password" id="password" name="password" required>
-                <span id="togglePassword" class="eye-icon">
-                    <!-- Eye Open -->
-                    <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" width="24" height="24">
-                        <path fill="currentColor" d="M12 4.5C7 4.5 2.7 8.2 1 12c1.7 3.8 6 7.5 11 7.5s9.3-3.7 11-7.5c-1.7-3.8-6-7.5-11-7.5zm0 13c-3.2 0-6-2.8-6-6s2.8-6 6-6 6 2.8 6 6-2.8 6-6 6z"/>
-                    </svg>
-                    <!-- Eye Closed -->
-                    <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" width="24" height="24" style="display: none;">
-                        <path fill="currentColor" d="M12 4.5c-4.3 0-8.6 3.7-10.5 7.5 1.9 3.8 6.2 7.5 10.5 7.5s8.6-3.7 10.5-7.5c-1.9-3.8-6.2-7.5-10.5-7.5zm0 13c-3.2 0-6-2.8-6-6s2.8-6 6-6 6 2.8 6 6-2.8 6-6 6zM2 14l2-2m8 8l-2-2m2-10l2 2m-8 8l-2-2"/>
-                    </svg>
-                </span>
-                
+
+    <main>
+        <!-- Login Form Container -->
+        <div class="form-container-login">
+            <div class="form-box loginForm">
+                <h2>Login to ChessHive</h2>
+                <form action="/login" method="POST">
+                    <!-- Email -->
+                    <label for="email">Email ID:</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <!-- Password -->
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <!-- Role -->
+                    <label for="role">Select Role:</label>
+                    <select id="role" name="role">
+                        <option value="admin">Admin</option>
+                        <option value="organizer">Organizer</option>
+                        <option value="coordinator">Coordinator</option>
+                        <option value="player">Player</option>
+                    </select>
+
+                    <!-- Submit Button -->
+                    <button type="submit">Login</button>
+                </form>
             </div>
-            <span id="passwordError" class="error"></span>
 
-            <!-- Role -->
-            <label for="role">Select Role:</label>
-            <select id="role" name="role">
-                <option value="admin">Admin</option>
-                <option value="organizer">Organizer</option>
-                <option value="coordinator">Coordinator</option>
-                <option value="player">Player</option>
-            </select>
+            <!-- Sign Up Redirect -->
+            <div class="signup-box">
+                <p>Don't have an account?</p>
+                <a href="/signup"><button>Sign Up</button></a>
+            </div>
+        </div>
+    </main>
 
-            <!-- Submit Button -->
-            <button type="submit">Login</button>
-        </form>
-    </div>
-
-    <!-- Sign Up Redirect -->
-    <div class="signup-box">
-        <p>Don't have an account?</p>
-        <button onclick="redirectToSignUp()">Sign Up</button>
-    </div>
-    </div>
-</main>
-
-<!-- Footer Section -->
-<footer>
-    <div>
-        <p>&copy; <%= new Date().getFullYear() %> Chess Hive</p>
-    </div>
-    <nav class="social-links">
-        <a href="#">Facebook</a> 
-        <a href="#">Twitter</a>  
-        <a href="#">Instagram</a>
-    </nav>
-</footer>
-
-<script>
-    function redirectToSignUp() {
-        window.location.href = "/signup";
-    }
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            let email = document.getElementById('email').value;
-            let password = document.getElementById('password').value;
-            let role = document.getElementById('role').value;
-            let emailError = document.getElementById('emailError');
-            let passwordError = document.getElementById('passwordError');
-
-            emailError.textContent = "";
-            passwordError.textContent = "";
-
-            // Email validation
-            let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailPattern.test(email)) {
-                emailError.textContent = "Please enter a valid email address.";
-                return;
-            }
-
-            // Password validation
-            let errors = [];
-
-            if (password.length < 8) {
-                errors.push("Password must atleast have 8 characters.");
-            }
-            if (!/[A-Z]/.test(password)) {
-                errors.push("Password must contain at least one uppercase letter.");
-            }
-            if (!/[a-z]/.test(password)) {
-                errors.push("Password must contain at least one lowercase letter.");
-            }
-            if (!/\d/.test(password)) {
-                errors.push("Password must contain at least one number.");
-            }
-            if (!/[@$!%*?&]/.test(password)) {
-                errors.push("Password must contain at least one special character (@$!%*?&).");
-            }
-
-            if (errors.length > 0) {
-                passwordError.textContent = errors.join(" ");
-                return;
-            }
-
-            // Redirect based on role
-            let dashboard = {
-                admin: "/admin_dashboard",
-                organizer: "/organizer_dashboard",
-                coordinator: "/coordinator_dashboard",
-                player: "/player_dashboard"
-            };
-            window.location.href = dashboard[role] || "/player_dashboard";
-        });
-
-        // Show/Hide Password Toggle
-        document.getElementById('togglePassword').addEventListener('click', function() {
-    let passwordInput = document.getElementById('password');
-    let eyeOpen = document.getElementById('eyeOpen');
-    let eyeClosed = document.getElementById('eyeClosed');
-
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-        eyeOpen.style.display = "none";
-        eyeClosed.style.display = "inline";
-    } else {
-        passwordInput.type = "password";
-        eyeOpen.style.display = "inline";
-        eyeClosed.style.display = "none";
-    }
-});
-
-</script>
+    <!-- Include Footer Partial -->
+    <%- include('./partials/dashboards/login/footer') %>
 </body>
 </html>

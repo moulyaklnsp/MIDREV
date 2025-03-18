@@ -1,18 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
-router.get('/signup', (req, res) => {
-    res.render('signup', { 
-        errors: {},     // ✅ Always pass an empty errors object to avoid ReferenceError
-        name: '', 
-        dob: '', 
-        gender: '', 
-        college: '', 
-        email: '', 
-        phone: '', 
-        role: ''
-    });
-});
+const db = require('./databasecongi');
 
 router.post('/signup', (req, res) => {
     const { name, dob, gender, college, email, phone, password, role } = req.body;
@@ -29,6 +17,7 @@ router.post('/signup', (req, res) => {
     if (!role.trim()) errors.role = "Role is required.";
 
     // ✅ If there are errors, re-render the form with errors
+    console.log(errors);
     if (Object.keys(errors).length > 0) {
         return res.render('signup', { 
             errors, 
@@ -36,8 +25,27 @@ router.post('/signup', (req, res) => {
         });
     }
 
-    // ✅ Else, continue to process the form (Save to DB)
-    res.send('Form Submitted Successfully');
+    db.run(
+    "INSERT INTO users (name, dob, gender, college, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [name, dob, gender, college, email, phone, password, role],
+    (err) => {
+        if (err) {
+            return res.send("Error: User already exists or invalid data.");
+        }
+        res.redirect("/login"); // Redirect to login page
+
+        }
+    
+        
+    );
+    db.all("SELECT * FROM users", [], (err, rows) => {
+    if (err) {
+        throw err;
+    }
+
+    console.table(rows); // Prints data in table format in console
+});
+     
 });
 
-module.exports = router;
+module.exports = router;  

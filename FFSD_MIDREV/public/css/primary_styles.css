@@ -20,6 +20,7 @@ header {
     padding: 0 40px;
     font-family: "Archivo",Arial, sans-serif;
 }
+
 .header-player-profile {
     background-color: black;
     color: yellow;
@@ -30,9 +31,6 @@ header {
     padding: 0 40px;
     font-family: "Archivo",Arial, sans-serif;
 }
-header h1 {
-    text-align: center; /* Ensure text is centered */
-}
 .secondary-header {
     text-align: center;
     font-size: 1.5rem;
@@ -42,7 +40,6 @@ header h1 {
 }
 nav {
     display: flex;
-    
 }
 .nav-links {
     list-style: none;
@@ -393,6 +390,7 @@ ul li {
     font-size: 1.2em; /* Adjust size */
     margin-right: 10px; /* Space between dot and text */
 }
+
 
 .format-section{
     background: rgba(0,0,0,0.9);
