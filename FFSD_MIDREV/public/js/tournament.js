@@ -73,7 +73,7 @@ function displayTournaments() {
     `;
 
     tableContainer.innerHTML = tableHTML;
-}
+} 
 
 //-------------ORGANISER FUNCTIONS--------------------//
 // Function to display tournaments for Organizers
