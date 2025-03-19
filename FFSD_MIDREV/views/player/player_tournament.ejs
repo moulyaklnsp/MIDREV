@@ -10,8 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
 
-    <script src="/js/tournament.js" defer></script>
-
 </head>
 <body>
     <div class="container2">
@@ -24,17 +22,45 @@
         </div>
 
         <!-- Tournament List -->
-        <div class="form-container" id="tournamentList">
-            <!-- Tournaments will be populated dynamically -->
+        <div class="form-container">
+            <% if (tournaments.length > 0) { %>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Entry Fee</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% tournaments.forEach(tournament => { %>
+                            <tr>
+                                <td><%= tournament.name %></td>
+                                <td><%= tournament.date %></td>
+                                <td><%= tournament.location %></td>
+                                <td>$<%= tournament.entry_fee %></td>
+                                <td>
+                                    <button onclick="joinTournament('<%= tournament.id %>')">Join</button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No approved tournaments available.</p>
+            <% } %>
         </div>
 
         <!-- Join Tournament Form -->
         <div id="joinTournamentForm" class="hidden">
             <h2 class="black-h2">Join Tournament</h2>
-            <form id="joinForm" class="form-container">
-                <input type="text" id="username" placeholder="Enter Username" required>
-                <input type="text" id="college" placeholder="Enter College Name" required>
-                <select id="gender" required>
+            <form id="joinForm" class="form-container" method="POST" action="/player/join-tournament">
+                <input type="hidden" id="tournamentId" name="tournamentId">
+                <input type="text" name="username" placeholder="Enter Username" required>
+                <input type="text" name="college" placeholder="Enter College Name" required>
+                <select name="gender" required>
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -47,15 +73,49 @@
             </form>
         </div>
 
-        <!-- Enrolled Tournaments Section -->
         <h2 class="black-h2">Enrolled Tournaments</h2>
         <div class="form-container">
-            <div id="enrolledTournaments"></div>
-
-            <div class="back-container">
-                <a href="/player/player_dashboard" class="back">Back to Dashboard</a>
-            </div>
+            <% if (enrolledTournaments.length > 0) { %>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Entry Fee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% enrolledTournaments.forEach(tournament => { %>
+                            <tr>
+                                <td><%= tournament.name %></td>
+                                <td><%= tournament.date %></td>
+                                <td><%= tournament.location %></td>
+                                <td>$<%= tournament.entry_fee %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>You have not enrolled in any tournaments.</p>
+            <% } %>
+        </div>
+        
+        <div class="back-container">
+            <a href="/player/player_dashboard" class="back">Back to Dashboard</a>
         </div>
     </div>
+
+    <script>
+        function joinTournament(tournamentId) {
+            document.getElementById("tournamentId").value = tournamentId;
+            document.getElementById("joinTournamentForm").classList.remove("hidden");
+        }
+
+        document.getElementById("cancelJoin").addEventListener("click", function () {
+            document.getElementById("joinTournamentForm").classList.add("hidden");
+        });
+    </script>
+
 </body>
 </html>

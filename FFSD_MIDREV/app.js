@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const ejs = require('ejs');
 const authrouter = require('./routes/auth');
-const db = require('./routes/databasecongi');
+const {db,db1} = require('./routes/databasecongi');
 const app = express();
 const PORT = 3000;
 const session = require('express-session');
@@ -26,6 +26,7 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+app.use(authrouter);
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -145,6 +146,95 @@ app.get('/:role/:subpage', (req, res) => {
         });
         return;
     }
+    if (subpage === 'tournament_management' && role === 'coordinator') {
+        db1.all("SELECT * FROM tournaments", [], (err, tournaments) => {
+            if (err) {
+                console.error("Database Error:", err);
+                return res.redirect('/coordinator_dashboard?error-message=Database Error');
+            }
+            res.render('coordinator/tournament_management', { 
+                tournaments,
+                successMessage: req.query['success-message'],
+                errorMessage: req.query['error-message'],
+                tournamentName: '', // Default empty values
+                tournamentDate: '',
+                tournamentLocation: '',
+                entryFee: ''
+            });
+        });
+        return;
+    }
+
+    if (subpage === 'organizer_tournament' && role === 'organizer') {
+        db1.all("SELECT * FROM tournaments", [], (err, tournaments) => {
+            if (err) {
+                console.error("Database Error:", err);
+                return res.redirect('/organizer_dashboard?error-message=Database Error');
+            }
+            res.render('organizer/organizer_tournament', { 
+                tournaments: tournaments || [], 
+                successMessage: req.query['success-message'],
+                errorMessage: req.query['error-message']
+            });
+        });
+        return;
+    }
+
+    if (subpage === 'admin_tournament_management' && role === 'admin') {
+        console.log('Fetching approved tournaments with player counts for admin');
+        db1.all(
+            `SELECT t.*, COUNT(tp.id) AS player_count 
+             FROM tournaments t 
+             LEFT JOIN tournament_players tp ON t.id = tp.tournament_id 
+             WHERE LOWER(t.status) = 'approved' 
+             GROUP BY t.id, t.name, t.date, t.location, t.entry_fee, t.status`,
+            [],
+            (err, tournaments) => {
+                if (err) {
+                    console.error("Database Error:", err);
+                    return res.redirect('/admin_dashboard?error-message=Database Error');
+                }
+                console.log("✅ Fetched Tournaments with Player Counts for Admin:", tournaments);
+                res.render('admin/admin_tournament_management', { 
+                    tournaments: tournaments || [],
+                    successMessage: req.query['success-message'],
+                    errorMessage: req.query['error-message']
+                });
+            }
+        );
+        return;
+    }
+    if (subpage === 'player_tournament' && role === 'player') {
+        const username=req.session.username;
+        db1.all("SELECT * FROM tournaments WHERE status = 'Approved'", [], (err, tournaments) => {
+            if (err) {
+                console.error("Error fetching tournaments:", err.message);
+                return res.status(500).send("Error retrieving tournaments.");
+            } 
+            // Fetch enrolled tournaments for the logged-in user
+            db1.all(
+                `SELECT t.* FROM tournament_players tp 
+                 JOIN tournaments t ON tp.tournament_id = t.id 
+                 WHERE tp.username = ?`,
+                [username],
+                (err, enrolledTournaments) => {
+                    if (err) {
+                        console.error("Error fetching enrolled tournaments:", err.message);
+                        return res.status(500).send("Error retrieving enrolled tournaments.");
+                    }
+    
+                    // Render page with both lists
+                    res.render("player/player_tournament", {
+                        tournaments,
+                        enrolledTournaments, // Pass enrolled tournaments
+                        username
+                    });
+                }
+            );
+        });
+        return;
+    }
+    
     // Handle synchronous subpages
     if (subpage === 'global_chat') {
         data.messages = [
@@ -273,7 +363,6 @@ app.get('/:role/:subpage', (req, res) => {
         res.redirect(`/${role}_dashboard?error-message=Page not found: ${subpage}`);
     }
 });
-
 // Handle Login Form (Redirects Admin & Organizer)
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
@@ -284,13 +373,13 @@ app.post('/login', (req, res) => {
             console.error("Database Error:", err);
             return res.redirect('/?error-message=Database Error');
         }
-
         if (!user) {
             return res.redirect('/login?error-message=Invalid credentials');
         }
-
         // Store the user's email in the session
         req.session.userEmail = user.email;
+        req.session.username = user.name;
+
         console.log(`User Login: ${user.email}, Role: ${user.role}, Session set: ${req.session.userEmail}`);
 
         // Redirect user based on role
@@ -343,14 +432,6 @@ app.get('/:page', (req, res) => {
         res.redirect(`/?error-message=Page not found: ${page}`);
     }
 });
-
-// app.post('/signup', (req, res) => {
-//     console.log("hi");
-//     console.log(req.body);
-// res.send("Form Submitted Successfully");
-// });
-
-app.use(authrouter);
 
 // Add a 404 handler for any unmatched routes
 app.use((req, res) => {
