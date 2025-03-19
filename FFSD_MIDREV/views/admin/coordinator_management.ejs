@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="/css/primary_styles.css">
 </head>
 <body>
@@ -27,17 +26,19 @@
                     <td><%= coordinator.email %></td>
                     <td><%= coordinator.college %></td>
                     <td>
-                        <button class="edit" onclick="editRow(this)">Edit</button>
-                        <button class="remove" onclick="removeRow(this)">Remove</button>
+                        <button onclick="removeCoordinator('<%= coordinator.email %>', this)">Remove</button>
                     </td>
                 </tr>
                 <% }); %>
             </table>
             <div class="back-container">
-                <a href="/admin/admin_dashboard" class="back">Back to Dashboard</a>
+                <a href="/admin_dashboard" class="back">Back to Dashboard</a>
             </div>
         </div>
     </div>
-    <script src="/routes/coordinator_management.js"></script>
+
+    <!-- Link to coordinator_management.js -->
+    <script src="/js/coordinator_management.js"></script>
+
 </body>
 </html>

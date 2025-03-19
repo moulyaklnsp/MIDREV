@@ -1,32 +1,26 @@
-function editRow(button) {
-    let row = button.parentElement.parentElement;
-    let cells = row.getElementsByTagName("td");
-
-    if (button.innerText === "Edit") {
-        // Convert text to input fields
-        for (let i = 0; i < 3; i++) {
-            let input = document.createElement("input");
-            input.type = "text";
-            input.value = cells[i].innerText;
-            cells[i].innerText = "";
-            cells[i].appendChild(input);
-        }
-        button.innerText = "Save";
-    } else {
-        // Save edited values
-        for (let i = 0; i < 3; i++) {
-            let input = cells[i].querySelector("input");
-            cells[i].innerText = input.value;
-        }
-        button.innerText = "Edit";
-    }
-}
-
-function removeRow(button) {
-    let row = button.parentElement.parentElement;
-    let confirmation = confirm("Are you sure you want to remove this user?");
-    
-    if (confirmation) {
-        row.remove();
+// public/js/coordinator_management.js
+function removeCoordinator(email, button) {
+    // Prompt for confirmation before deletion
+    if (confirm(`Are you sure you want to remove the coordinator with email: ${email}?`)) {
+        // Send DELETE request to the server
+        fetch(`/coordinators/remove/${encodeURIComponent(email)}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the table row if deletion is successful
+                const row = button.closest('tr');
+                row.remove();
+            } else {
+                // Display error message from server
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            // Handle network or unexpected errors
+            console.error('Error:', error);
+            alert('An error occurred while removing the coordinator.');
+        });
     }
 }

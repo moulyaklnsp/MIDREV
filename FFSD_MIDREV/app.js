@@ -13,13 +13,14 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false } // Set to true if using HTTPS
 }));
+
 // Array to store meetings data
 const meetings = [];
 
 // Add request logger middleware
 app.use((req, res, next) => {
-//   console.log(`Request URL: ${req.url}`);
-  next();
+    //   console.log(`Request URL: ${req.url}`);
+    next();
 });
 
 // Middleware to parse form data
@@ -116,6 +117,7 @@ app.get('/:role/:subpage', (req, res) => {
         );
         return; // Stop further execution
     }
+
     // Handle other async subpages
     if (subpage === 'coordinator_management') {
         db.all("SELECT name, email, college FROM users WHERE role = 'coordinator'", [], (err, rows) => {
@@ -198,10 +200,10 @@ app.get('/:role/:subpage', (req, res) => {
         ];
     }
     if (subpage === "store") {
-        data.walletBalance= 100
+        data.walletBalance = 100;
     }
     if (subpage === "subscription") {
-        data.walletBalance= 100
+        data.walletBalance = 100;
     }
     if (subpage === "player_chat") {
         data.users = [
@@ -214,7 +216,6 @@ app.get('/:role/:subpage', (req, res) => {
         ];
         data.currentUser = ""; // Can be set dynamically when a user logs in
     }
-    //organizer_dashboard
     if (subpage === "chat") {
         data.users = [
             { username: "John" },
@@ -289,8 +290,9 @@ app.post('/login', (req, res) => {
             return res.redirect('/login?error-message=Invalid credentials');
         }
 
-        // Store the user's email in the session
+        // Store the user's email and role in the session
         req.session.userEmail = user.email;
+        req.session.userRole = user.role; // Added to support isAdmin middleware
         console.log(`User Login: ${user.email}, Role: ${user.role}, Session set: ${req.session.userEmail}`);
 
         // Redirect user based on role
@@ -323,6 +325,54 @@ app.post('/coordinator/coordinator_meetings/schedule', (req, res) => {
     res.redirect("/coordinator/coordinator_meetings?success-message=Meeting scheduled successfully");
 });
 
+// Middleware for admin authorization
+const isAdmin = (req, res, next) => {
+    if (req.session.userRole === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+};
+//Middleware for admin or organiser authorization
+const isAdminOrOrganizer = (req, res, next) => {
+    if (req.session.userRole === 'admin' || req.session.userRole === 'organizer') {
+        return next(); // Proceed if user is admin or organizer
+    }
+    res.status(403).json({ success: false, message: 'Unauthorized' });
+};
+
+
+// Remove coordinator route
+app.delete('/coordinators/remove/:email', isAdminOrOrganizer, (req, res) => {
+    const email = req.params.email;
+    db.run("DELETE FROM users WHERE email = ? AND role = 'coordinator'", [email], function(err) {
+        if (err) {
+            console.error("Database Error:", err);
+            return res.status(500).json({ success: false, message: 'Database Error' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ success: false, message: 'Coordinator not found' });
+        }
+        res.json({ success: true, message: 'Coordinator removed successfully' });
+    });
+});
+
+// Remove organizer route
+app.delete('/organizers/remove/:email', isAdmin, (req, res) => {
+    const email = req.params.email;
+    db.run("DELETE FROM users WHERE email = ? AND role = 'organizer'", [email], function(err) {
+        if (err) {
+            console.error("Database Error:", err);
+            return res.status(500).json({ success: false, message: 'Database Error' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ success: false, message: 'Organizer not found' });
+        }
+        res.json({ success: true, message: 'Organizer removed successfully' });
+    });
+});
+
+
 // Dynamic Route Handler for general pages (AFTER more specific routes)
 app.get('/:page', (req, res) => {
     const { page } = req.params;
@@ -343,12 +393,6 @@ app.get('/:page', (req, res) => {
         res.redirect(`/?error-message=Page not found: ${page}`);
     }
 });
-
-// app.post('/signup', (req, res) => {
-//     console.log("hi");
-//     console.log(req.body);
-// res.send("Form Submitted Successfully");
-// });
 
 app.use(authrouter);
 
