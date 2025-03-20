@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const ejs = require('ejs');
 const authrouter = require('./routes/auth');
-const {db,db1} = require('./routes/databasecongi');
+const db = require('./routes/databasecongi');
 const app = express();
 const PORT = 3000;
 const session = require('express-session');
@@ -149,7 +149,7 @@ app.get('/:role/:subpage', (req, res) => {
         return;
     }
     if (subpage === 'tournament_management' && role === 'coordinator') {
-        db1.all("SELECT * FROM tournaments", [], (err, tournaments) => {
+        db.all("SELECT * FROM tournaments", [], (err, tournaments) => {
             if (err) {
                 console.error("Database Error:", err);
                 return res.redirect('/coordinator_dashboard?error-message=Database Error');
@@ -168,7 +168,7 @@ app.get('/:role/:subpage', (req, res) => {
     }
 
     if (subpage === 'organizer_tournament' && role === 'organizer') {
-        db1.all("SELECT * FROM tournaments", [], (err, tournaments) => {
+        db.all("SELECT * FROM tournaments", [], (err, tournaments) => {
             if (err) {
                 console.error("Database Error:", err);
                 return res.redirect('/organizer_dashboard?error-message=Database Error');
@@ -184,7 +184,7 @@ app.get('/:role/:subpage', (req, res) => {
 
     if (subpage === 'admin_tournament_management' && role === 'admin') {
         console.log('Fetching approved tournaments with player counts for admin');
-        db1.all(
+        db.all(
             `SELECT t.*, COUNT(tp.id) AS player_count 
              FROM tournaments t 
              LEFT JOIN tournament_players tp ON t.id = tp.tournament_id 
@@ -208,13 +208,13 @@ app.get('/:role/:subpage', (req, res) => {
     }
     if (subpage === 'player_tournament' && role === 'player') {
         const username=req.session.username;
-        db1.all("SELECT * FROM tournaments WHERE status = 'Approved'", [], (err, tournaments) => {
+        db.all("SELECT * FROM tournaments WHERE status = 'Approved'", [], (err, tournaments) => {
             if (err) {
                 console.error("Error fetching tournaments:", err.message);
                 return res.status(500).send("Error retrieving tournaments.");
             } 
             // Fetch enrolled tournaments for the logged-in user
-            db1.all(
+            db.all(
                 `SELECT t.* FROM tournament_players tp 
                  JOIN tournaments t ON tp.tournament_id = t.id 
                  WHERE tp.username = ?`,
@@ -236,7 +236,59 @@ app.get('/:role/:subpage', (req, res) => {
         });
         return;
     }
+    if(subpage === 'store_management' && role === 'coordinator')
+    {
+        db.all("SELECT * FROM products", [], (err, products) => {
+            if (err) {
+                console.error("Error fetching products:", err.message);
+                return res.status(500).send("Could not retrieve products.");
+            }
+            res.render('coordinator/store_management', { products });
+        });
+        return;
+    }
+    if (subpage === 'store' && role === 'player') {
+        db.all("SELECT * FROM products", [], (err, products) => {
+            if (err) {
+                console.error("Database Error:", err);
+                return res.status(500).send("Error fetching products");
+            }
+            if (!req.session.playerName || !req.session.playerCollege) {
+                return res.redirect('/login'); // Redirect if session is missing
+            }
+            const walletBalance = req.session.walletBalance || 0;
+            res.render("player/store", { 
+                products, 
+                walletBalance, 
+                playerName: req.session.playerName,  // ✅ Pass player name
+                playerCollege: req.session.playerCollege  // ✅ Pass player college
+            });
+        });
+        return;
+    }
     
+    if (subpage === 'store_monitoring' && role === 'organizer') {
+        
+        const productsQuery = "SELECT id, name, price, coordinator, college, image_url FROM products";
+        const salesQuery = 
+            "SELECT p.name AS product, p.price, p.coordinator, s.college AS college, s.buyer, s.purchase_date " +
+            "FROM sales s JOIN products p ON s.product_id = p.id;";
+        db.all(productsQuery, [], (err, products) => {
+            if (err) {
+                console.error("Error fetching products:", err);
+                return res.status(500).send("Error fetching products.");
+            }
+            db.all(salesQuery, [], (err, sales) => {
+                if (err) {
+                    console.error("Error fetching sales:", err);
+                    return res.status(500).send("Error fetching sales.");
+                }
+                console.log("Sales Data:", sales); // Log the sales data
+                res.render("organizer/store_monitoring", { products, sales });
+            });
+        });
+        return;
+    }
     // Handle synchronous subpages
     if (subpage === 'global_chat') {
         data.messages = [
@@ -383,6 +435,9 @@ app.post('/login', (req, res) => {
         req.session.userRole = user.role; // Added to support isAdmin middleware
         // Store the user's email in the session
         req.session.username = user.name;
+        req.session.playerName = user.name; // Assuming 'name' exists in your 'users' table
+        req.session.playerCollege = user.college; // Assuming 'college' exists in your 'users' table
+
 
         console.log(`User Login: ${user.email}, Role: ${user.role}, Session set: ${req.session.userEmail}`);
 

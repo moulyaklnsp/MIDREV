@@ -9,7 +9,7 @@ const db = new sqlite3.Database("./users.db", (err) => {
     }
 });
 
-// Create Users Table (if not exists)
+// Create Tables
 db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS users (
@@ -24,23 +24,11 @@ db.serialize(() => {
             role TEXT CHECK(role IN ('admin','player', 'coordinator', 'organizer')) NOT NULL
         )
     `, (err) => {
-        if (err) console.error("Error creating users table:", err.message);
-        else console.log("Users table is ready.");
+        if (err) console.error("❌ Error creating users table:", err.message);
+        else console.log("✅ Users table is ready.");
     });
-});
 
-// Connect to Tournaments Database
-const db1 = new sqlite3.Database("./tournaments.db", (err) => {
-    if (err) {
-        console.error("Error opening tournaments database:", err.message);
-    } else {
-        console.log("Connected to tournaments database.");
-    }
-});
-
-// Create Tournaments Table (if not exists)
-db1.serialize(() => {
-    db1.run(`
+    db.run(`
         CREATE TABLE IF NOT EXISTS tournaments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -50,11 +38,11 @@ db1.serialize(() => {
             status TEXT DEFAULT 'Pending'
         )
     `, (err) => {
-        if (err) console.error("Error creating tournaments table:", err.message);
-        else console.log("Tournaments table is ready.");
+        if (err) console.error("❌ Error creating tournaments table:", err.message);
+        else console.log("✅ Tournaments table is ready.");
     });
 
-    db1.run(`
+    db.run(`
         CREATE TABLE IF NOT EXISTS tournament_players (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             tournament_id INTEGER,
@@ -62,9 +50,40 @@ db1.serialize(() => {
             college TEXT,
             gender TEXT,
             FOREIGN KEY (tournament_id) REFERENCES tournaments(id)
-        )`);
+        )
+    `, (err) => {
+        if (err) console.error("❌ Error creating tournament_players table:", err.message);
+        else console.log("✅ Tournament Players table is ready.");
+    });
 
+    db.run(`
+        CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            price REAL NOT NULL,
+            image_url TEXT NOT NULL,
+            coordinator TEXT NOT NULL,
+            college TEXT NOT NULL
+        )
+    `, (err) => {
+        if (err) console.error("❌ Error creating products table:", err.message);
+        else console.log("✅ Products table is ready.");
+    });
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS sales (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            buyer TEXT NOT NULL,
+            college TEXT NOT NULL, 
+            price REAL NOT NULL,
+            purchase_date TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (product_id) REFERENCES products(id)
+        )
+    `, (err) => {
+        if (err) console.error("❌ Error creating sales table:", err.message);
+        else console.log("✅ Sales table is ready.");
+    });
 });
 
-// Export both database connections
-module.exports = { db, db1 };
+module.exports = db;
