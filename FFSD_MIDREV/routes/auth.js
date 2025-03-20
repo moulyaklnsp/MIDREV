@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('./databasecongi');
 
-router.get('/auth-test', (req, res) => {
-    res.json({ message: 'Authentication test page' });
-});
 router.post('/signup', (req, res) => {
     console.log("hi");
     const { name, dob, gender, college, email, phone, password, role } = req.body;
@@ -219,5 +216,46 @@ router.post("/buy", (req, res) => {
     );
 });
 
+// Route to schedule a new meeting (Coordinator-Specific)
+router.post('/coordinator/coordinator_meetings/schedule', (req, res) => {
+    const { title, date, time, link } = req.body;
 
+    const query = `INSERT INTO meetingsdb (title, date, time, link) VALUES (?, ?, ?, ?)`;
+    db.run(query, [title, date, time, link], function (err) {
+        if (err) {
+            console.error('Error scheduling meeting:', err);
+            return res.status(500).send('Database error');
+        }
+         // Fetch all entries from meetingsdb after inserting a new one
+         db.all("SELECT * FROM meetingsdb", [], (err, rows) => {
+            if (err) {
+                console.error('Error retrieving meetings:', err);
+            } else {
+                console.log('Current Meetings in DB:', rows);
+            }
+        });
+        res.redirect('/coordinator/coordinator_meetings');
+    });
+});
+
+router.post('/meetings/schedule', (req, res) => {
+    const { title, date, time, link } = req.body;
+
+    const query = `INSERT INTO organizermeetings (title, date, time, link) VALUES (?, ?, ?, ?)`;
+    db.run(query, [title, date, time, link], function (err) {
+        if (err) {
+            console.error('Error scheduling meeting:', err);
+            return res.status(500).send('Database error');
+        }
+         // Fetch all entries from meetingsdb after inserting a new one
+         db.all("SELECT * FROM organizermeetings", [], (err, rows) => {
+            if (err) {
+                console.error('Error retrieving meetings:', err);
+            } else {
+                console.log('Current Meetings in DB:', rows);
+            }
+        });
+        res.redirect('/coordinator/coordinator_meetings');
+    });
+});
 module.exports = router;

@@ -32,8 +32,8 @@
                     <th>Time</th>
                     <th>Link</th>
                 </tr>
-                <% if (meetings.length > 0) { %>
-                    <% meetings.forEach(meeting => { %>
+                <% if (typeof organizermeetings !== "undefined" && organizermeetings.length > 0) { %>
+                    <% organizermeetings.forEach(meeting => { %>
                         <tr>
                             <td><%= meeting.title %></td>
                             <td><%= meeting.date %></td>
@@ -42,9 +42,7 @@
                         </tr>
                     <% }); %>
                 <% } else { %>
-                    <tr>
-                        <td colspan="4">No upcoming meetings.</td>
-                    </tr>
+                    <p>No meetings available.</p>
                 <% } %>
             </table>
 

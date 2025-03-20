@@ -84,6 +84,34 @@ db.serialize(() => {
         if (err) console.error("❌ Error creating sales table:", err.message);
         else console.log("✅ Sales table is ready.");
     });
+
+    db.run(`CREATE TABLE IF NOT EXISTS meetingsdb (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        date TEXT NOT NULL,
+        time TEXT NOT NULL,
+        link TEXT NOT NULL
+    )`, (err) => {
+        if (err) {
+            console.error("❌ Error creating meetings table:", err);
+        } else {
+            console.log('✅ Meetings table is ready.');
+        }
+    });
+
+    db.run(`CREATE TABLE IF NOT EXISTS organizermeetings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        date TEXT NOT NULL,
+        time TEXT NOT NULL,
+        link TEXT NOT NULL
+    )`, (err) => {
+        if (err) {
+            console.error("❌ Error creating organizermeetings table:", err);
+        } else {
+            console.log('✅ OrganizerMeetings table is ready.');
+        }
+    });
 });
 
 module.exports = db;

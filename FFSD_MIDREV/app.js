@@ -14,9 +14,6 @@ app.use(session({
     cookie: { secure: false } // Set to true if using HTTPS
 }));
 
-// Array to store meetings data
-const meetings = [];
-
 // Add request logger middleware
 app.use((req, res, next) => {
     //   console.log(`Request URL: ${req.url}`);
@@ -289,6 +286,28 @@ app.get('/:role/:subpage', (req, res) => {
         });
         return;
     }
+    if (subpage === "coordinator_meetings") {
+        const query = "SELECT * FROM meetingsdb ORDER BY date, time";
+        db.all(query, [], (err, results) => {
+            if (err) {
+                console.error('Error fetching meetings:', err);
+                return res.status(500).send('Database error');
+            }
+            res.render('coordinator/coordinator_meetings', { meetings: results });
+        });
+        return;
+    }
+    if (subpage === 'meetings') {
+        const query = "SELECT * FROM organizermeetings ORDER BY date, time";
+        db.all(query, [], (err, results) => {
+            if (err) {
+                console.error('Error fetching meetings:', err);
+                return res.status(500).send('Database error');
+            }
+            res.render('organizer/meetings', { organizermeetings: results });
+        });
+        return;
+    }
     // Handle synchronous subpages
     if (subpage === 'global_chat') {
         data.messages = [
@@ -329,11 +348,6 @@ app.get('/:role/:subpage', (req, res) => {
             { sender: "Jane", text: "Welcome to ChessHive!" }
         ];
         data.currentUser = "";
-    }
-    if (subpage === "coordinator_meetings") {
-        data.meetings = [
-            { title: "Strategy Session", date: "2025-03-20", time: "14:00", link: "#" }
-        ];
     }
     if (subpage === "player_stats") {
         data.players = [
@@ -389,12 +403,6 @@ app.get('/:role/:subpage', (req, res) => {
             rapid: ['College B', 'College A', 'College D'],
             blitz: ['College C', 'College B', 'College A']
         };
-    }
-    if (subpage === 'meetings') {
-        // Use the meetings array
-        data.meetings = meetings.length > 0 ? meetings : [
-            { title: "Strategy Session", date: "2025-03-20", time: "14:00", link: "#" }
-        ];
     }
     if (subpage === 'organizer_profile') {
         data.organizer = {
@@ -455,20 +463,6 @@ app.post('/login', (req, res) => {
                 return res.redirect('/?error-message=Invalid Role');
         }
     });
-});
-
-app.post("/meetings/schedule", (req, res) => {
-    const { title, date, time, link } = req.body;
-    meetings.push({ title, date, time, link });
-    res.redirect("/organizer/meetings?success-message=Meeting scheduled successfully");
-});
-
-app.post('/coordinator/coordinator_meetings/schedule', (req, res) => {
-    const { title, date, time, link } = req.body;
-    
-    // Ideally, store this data in a database. For now, log it.
-    console.log("New Meeting Scheduled:", { title, date, time, link });
-    res.redirect("/coordinator/coordinator_meetings?success-message=Meeting scheduled successfully");
 });
 
 // Middleware for admin authorization
