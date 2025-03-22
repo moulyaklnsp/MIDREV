@@ -99,6 +99,7 @@ app.get('/:role/:subpage', (req, res) => {
             "SELECT id, email, college FROM users WHERE email = ? AND role = 'coordinator'",
             [req.session.userEmail],
             (err, row) => {
+
                 if (err) {
                     console.error("Database Error:", err);
                     return res.redirect('/coordinator_dashboard?error-message=Database Error');
@@ -345,13 +346,33 @@ app.get('/:role/:subpage', (req, res) => {
         ];
     }
     if (subpage === 'organizer_profile') {
-        data.organizer = {
-            name: "John Doe",
-            email: "johndoe@example.com",
-            experience: "10 Years in Chess Tournament Management"
-        };
-    }
 
+        db.get(
+            "SELECT * FROM users WHERE email = ? AND role = 'organizer'",
+            [req.session.userEmail],
+            (err, row) => {
+
+                if (err) {
+                    console.error("Database Error:", err);
+                    return res.redirect('/organizer_dashboard?error-message=Database Error');
+                }
+                if (!row) {
+                    console.log("No organizer found for email:", req.session.userEmail);
+                    return res.redirect('/roganizer_dashboard?error-message=Coordinator not found');
+                }
+
+                console.log("Rendering organizer_profile with data:", row);
+                res.render('organizer/organizer_profile', {
+                    organizer: row,
+                    successMessage: req.query['success-message'],
+                    errorMessage: req.query['error-message']
+                });
+            }
+        );
+        return;
+    }
+        
+    
     // Final render for unhandled synchronous subpages
     try {
         res.render(`${role}/${subpage}`, { 
