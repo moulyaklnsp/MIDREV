@@ -10,20 +10,60 @@
     <div class="container">
         <h2 class="black-h2">All Products Added</h2>
         <div class="table-div">
-            <table id="productListTable"></table>
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Coordinator</th>
+                    <th>College</th>
+                    <th>Image</th>
+                </tr>
+                <% if (typeof products !== "undefined" && products.length > 0) { %>
+                    <% products.forEach(product => { %>
+                        <tr>
+                            <td><%= product.name %></td>
+                            <td>₹<%= product.price %></td>
+                            <td><%= product.coordinator || "undefined" %></td>
+                            <td><%= product.college || "undefined" %></td>
+                            <td><img src="<%= product.imageUrl %>" alt="<%= product.name %>" width="50"></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <p>No products available.</p>
+                <% } %>
+            </table>
         </div>
     </div>
 
     <div class="container">
         <h2 class="black-h2">Sales Report</h2>
         <div class="table-div">
-            <table id="salesReportTable"></table>
-            <div class="back-container">
-                <a href="/organizer_dashboard" class="back">Back to Dashboard</a>
-            </div>
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Coordinator</th>
+                    <th>College</th>
+                    <th>Date</th>
+                </tr>
+                <% if (typeof sales !== "undefined" && sales.length > 0) { %>
+                    <% sales.forEach(sale => { %>
+                        <tr>
+                            <td><%= sale.product%></td>
+                            <td>₹<%= sale.price %></td>
+                            <td><%= sale.coordinator || "undefined" %></td>
+                            <td><%= sale.college || "undefined" %></td>
+                            <td><%= sale.purchase_date %></td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <p>No products available.</p>
+                <% } %>
+            </table>
+        </div>
+        <div class="back-container">
+            <a href="/organizer_dashboard" class="back">Back to Dashboard</a>
         </div>
     </div>
-
-    <script src="/js/organizer_script.js"></script>
 </body>
 </html>

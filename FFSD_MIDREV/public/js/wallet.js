@@ -1,27 +1,3 @@
-function displayItems() {
-    const storeItemsContainer = document.querySelector(".store-items");
-    storeItemsContainer.innerHTML = ""; // Clear existing items
-
-    // Retrieve products from localStorage
-    let products = JSON.parse(localStorage.getItem('products')) || [];
-
-    // Generate product cards
-    products.forEach(product => {
-        const itemElement = document.createElement("div");
-        itemElement.classList.add("item");
-        itemElement.innerHTML = `
-            <img src="${product.imageurl}" alt="${product.name}">
-            <p>${product.name}</p>
-            <p>Price: $${product.price}</p>
-            <button onclick="purchaseItem('${product.name}', ${product.price})">Buy Now</button>
-        `;
-        storeItemsContainer.appendChild(itemElement);
-        console.log(`price: ${product.price}`)
-    });
-}
-
-document.addEventListener("DOMContentLoaded", displayItems);
-
 function addFunds() {
     let amount = prompt("Enter amount to add:");
     if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
@@ -34,71 +10,61 @@ function addFunds() {
     }
 }
 
-function purchaseItem(itemName, price) {
+window.onload = function () {
+            
+    let savedBalance = localStorage.getItem("walletBalance");
+    if (savedBalance) {
+        document.getElementById("walletBalance").innerText = savedBalance;
+    }
+};
+const playerName = "<%= playerName %>";
+const playerCollege = "<%= playerCollege %>";
+function buyProduct(productId, price) {
     let balance = parseFloat(document.getElementById("walletBalance").innerText);
-    console.log(`balance:${balance}`);
+
     if (balance >= price) {
         balance -= price;
-        document.getElementById("walletBalance").innerText = balance.toFixed(2);
-        alert(`Purchase successful! You bought a ${itemName}. It will be delivered soon.`);
+        document.getElementById("walletBalance").innerText = balance;
+
+        // Save new balance (in localStorage)
+        localStorage.setItem("walletBalance", balance);
+
+        // Create a hidden form and submit to server
+        let form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/buy";
+
+        let productInput = document.createElement("input");
+        productInput.type = "hidden";
+        productInput.name = "productId";
+        productInput.value = productId;
+
+        let priceInput = document.createElement("input");
+        priceInput.type = "hidden";
+        priceInput.name = "price";
+        priceInput.value = price;
+
+        let buyerInput = document.createElement("input");
+        buyerInput.type = "hidden";
+        buyerInput.name = "buyer";
+        buyerInput.value = playerName; // Get from session
+
+        let collegeInput = document.createElement("input");
+        collegeInput.type = "hidden";
+        collegeInput.name = "college";
+        collegeInput.value = playerCollege; // Get from session
+
+        form.appendChild(productInput);
+        form.appendChild(priceInput);
+        form.appendChild(buyerInput);
+        form.appendChild(collegeInput);
+
+        document.body.appendChild(form);
+        form.submit();
     } else {
-        alert("Insufficient balance! Please add funds to your wallet.");
+        alert("Insufficient funds!");
     }
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    displayProducts();
-});
-
-function displayProducts() {
-    const products = JSON.parse(localStorage.getItem('products')) || [];
-    const productContainer = document.getElementById('chesshiveProducts');
-    productContainer.innerHTML = '';
-
-    products.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-        productCard.innerHTML = `
-            <div class="product-image">
-                <img src="${product.imageUrl}" alt="${product.name}">
-            </div>
-            <div class="product-info">
-                <h4>${product.name}</h4>
-                <p class="price">Price: <span>$${product.price}</span></p>
-                <p class="added-by">Added by: <strong>${product.coordinator}</strong> (${product.college})</p>
-                <button class="buy-btn" onclick="buyProduct('${product.name}', ${product.price}, '${product.coordinator}', '${product.college}')">
-                    Buy Now
-                </button>
-            </div>
-        `;
-        productContainer.appendChild(productCard);
-    });
-}
-
-
-function buyProduct(name, price, coordinator, college) {
-    let balance = parseFloat(document.getElementById("walletBalance").innerText);
-    console.log(`balance:${balance}`);
-    if (balance >= price) {
-        balance -= price;
-        document.getElementById("walletBalance").innerText = balance.toFixed(2);
-        alert(`You have purchased ${name} for $${price}.`);
-
-        let sales = JSON.parse(localStorage.getItem('sales')) || [];
-        sales.push({ name, price, coordinator, college, date: new Date().toLocaleString() });
-        localStorage.setItem('sales', JSON.stringify(sales));
-
-        updateOrganizerReport();
-    } else {
-        alert("Insufficient balance! Please add funds to your wallet.");
-    }
-}
-
-function updateOrganizerReport() {
-    let sales = JSON.parse(localStorage.getItem('sales')) || [];
-    localStorage.setItem('sales', JSON.stringify(sales));
-}
-
 
 function purchaseSubscription(price) {
     let balance = parseFloat(document.getElementById("walletBalance").innerText);

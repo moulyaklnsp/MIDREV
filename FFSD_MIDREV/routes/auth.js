@@ -1,10 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {db,db1} = require('./databasecongi');
+const db = require('./databasecongi');
 
-router.get('/auth-test', (req, res) => {
-    res.json({ message: 'Authentication test page' });
-});
 router.post('/signup', (req, res) => {
     console.log("hi");
     const { name, dob, gender, college, email, phone, password, role } = req.body;
@@ -63,7 +60,7 @@ router.post('/tournament_management', (req, res) => {
 
     console.log(errors);
     if (Object.keys(errors).length > 0) {
-        db1.all("SELECT * FROM tournaments", [], (err, tournaments) => {
+        db.all("SELECT * FROM tournaments", [], (err, tournaments) => {
             if (err) {
                 console.error("Error fetching tournaments:", err.message);
                 return res.status(500).send("Error: Could not fetch tournaments.");
@@ -81,7 +78,7 @@ router.post('/tournament_management', (req, res) => {
         });
         return;
     }
-    db1.run(
+    db.run(
         "INSERT INTO tournaments (name, date, location, entry_fee, status) VALUES (?, ?, ?, ?, ?)",
         [tournamentName, tournamentDate, tournamentLocation, entryFee],
         function (err) {
@@ -90,7 +87,7 @@ router.post('/tournament_management', (req, res) => {
                 return res.status(500).send("Error: Could not add tournament.");
             }
             console.log("Tournament added successfully."); 
-            db1.all("SELECT * FROM tournaments", [], (err, rows) => {
+            db.all("SELECT * FROM tournaments", [], (err, rows) => {
                 if (err) {
                     console.error("Error fetching tournaments:", err.message);
                     return res.status(500).send("Error: Could not fetch tournaments.");
@@ -105,7 +102,7 @@ router.post('/tournament_management', (req, res) => {
 // New routes for approval/rejection
 router.post('/organizer/approve-tournament', (req, res) => {
     const { tournamentId } = req.body;
-    db1.run(
+    db.run(
         "UPDATE tournaments SET status = 'Approved' WHERE id = ?",
         [tournamentId],
         function (err) {
@@ -121,7 +118,7 @@ router.post('/organizer/approve-tournament', (req, res) => {
 
 router.post('/organizer/reject-tournament', (req, res) => {
     const { tournamentId } = req.body;
-    db1.run(
+    db.run(
         "UPDATE tournaments SET status = 'Rejected' WHERE id = ?",
         [tournamentId],
         function (err) {
@@ -148,7 +145,7 @@ router.post("/player/join-tournament", (req, res) => {
         return res.status(400).send("All fields are required.");
     }
 
-    db1.run(
+    db.run(
         "INSERT INTO tournament_players (tournament_id, username, college, gender) VALUES (?, ?, ?, ?)",
         [tournamentId, req.session.username, college, gender],
         function (err) {
@@ -157,7 +154,7 @@ router.post("/player/join-tournament", (req, res) => {
                 return res.status(500).send("Error: Could not join tournament.");
             }
             console.log(`Player ${req.session.username} joined tournament ID: ${tournamentId}`);
-            db1.all("SELECT * FROM tournament_players", [], (err, rows) => {
+            db.all("SELECT * FROM tournament_players", [], (err, rows) => {
                 if (err) {
                     console.error("Error fetching tournament players:", err.message);
                 } else {
@@ -170,6 +167,95 @@ router.post("/player/join-tournament", (req, res) => {
     );
 });
 
+router.post('/coordinator/add-product', (req, res) => {
+    const { productName, productPrice, productImage, coordinatorName, collegeName } = req.body;
 
+    if (!productName || !productPrice || !productImage || !coordinatorName || !collegeName) {
+        return res.send("All fields are required.");
+    }
 
+    db.run(
+        "INSERT INTO products (name, price, image_url, coordinator, college) VALUES (?, ?, ?, ?, ?)",
+        [productName, productPrice, productImage, coordinatorName, collegeName],
+        function (err) {
+            if (err) {
+                console.error("Error adding product:", err.message);
+                return res.send("Could not add product.");
+            }
+            db.all("SELECT * FROM products", [], (err, rows) => {
+                if (err) {
+                    console.error("Error fetching products:", err.message);
+                    return;
+                }
+                console.log("Current Products Table Entries:");
+                console.table(rows);
+            });
+            res.redirect('/coordinator/store_management');
+        }
+    );
+});
+
+router.post("/buy", (req, res) => {
+    console.log("req.body:", req.body);
+    const { productId, price, buyer, college } = req.body;
+
+    if (!productId || !price || !buyer || !college) {
+        return res.send("Error: Missing required fields.");
+    }
+    
+    db.run(
+        "INSERT INTO sales (product_id, price, buyer, college, purchase_date) VALUES (?, ?, ?, ?, datetime('now'))",
+        [productId, price, buyer, college],
+        function (err) {
+            if (err) {
+                console.error("Error inserting into sales:", err.message);
+                return res.send("Purchase failed.");
+            }
+            res.redirect("/player/store");
+        }
+    );
+});
+
+// Route to schedule a new meeting (Coordinator-Specific)
+router.post('/coordinator/coordinator_meetings/schedule', (req, res) => {
+    const { title, date, time, link } = req.body;
+
+    const query = `INSERT INTO meetingsdb (title, date, time, link) VALUES (?, ?, ?, ?)`;
+    db.run(query, [title, date, time, link], function (err) {
+        if (err) {
+            console.error('Error scheduling meeting:', err);
+            return res.status(500).send('Database error');
+        }
+         // Fetch all entries from meetingsdb after inserting a new one
+         db.all("SELECT * FROM meetingsdb", [], (err, rows) => {
+            if (err) {
+                console.error('Error retrieving meetings:', err);
+            } else {
+                console.log('Current Meetings in DB:', rows);
+            }
+        });
+        res.redirect('/coordinator/coordinator_meetings');
+    });
+});
+
+router.post('/meetings/schedule', (req, res) => {
+    const { title, date, time, link } = req.body;
+
+    const query = `INSERT INTO organizermeetings (title, date, time, link) VALUES (?, ?, ?, ?)`;
+    db.run(query, [title, date, time, link], function (err) {
+        if (err) {
+            console.error('Error scheduling meeting:', err);
+            return res.status(500).send('Database error');
+        }
+         // Fetch all entries from meetingsdb after inserting a new one
+         db.all("SELECT * FROM organizermeetings", [], (err, rows) => {
+            if (err) {
+                console.error('Error retrieving meetings:', err);
+            } else {
+                console.log('Current Meetings in DB:', rows);
+            }
+        });
+        res.redirect('/coordinator/coordinator_meetings');
+    });
+});
 module.exports = router;

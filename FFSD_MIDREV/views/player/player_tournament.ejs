@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+    <script src="/js/tournament.js"></script>
 
 </head>
 <body>
@@ -42,7 +43,14 @@
                                 <td><%= tournament.location %></td>
                                 <td>$<%= tournament.entry_fee %></td>
                                 <td>
-                                    <button onclick="joinTournament('<%= tournament.id %>')">Join</button>
+                                    <% 
+                                        const alreadyEnrolled = enrolledTournaments.some(enrolled => enrolled.id === tournament.id);
+                                        if (!alreadyEnrolled) { 
+                                    %>
+                                        <button onclick="joinTournament('<%= tournament.id %>')">Join</button>
+                                    <% } else { %>
+                                        <span class="enrolled-text">Already Enrolled</span>
+                                    <% } %>
                                 </td>
                             </tr>
                         <% }); %>
@@ -105,17 +113,5 @@
             <a href="/player/player_dashboard" class="back">Back to Dashboard</a>
         </div>
     </div>
-
-    <script>
-        function joinTournament(tournamentId) {
-            document.getElementById("tournamentId").value = tournamentId;
-            document.getElementById("joinTournamentForm").classList.remove("hidden");
-        }
-
-        document.getElementById("cancelJoin").addEventListener("click", function () {
-            document.getElementById("joinTournamentForm").classList.add("hidden");
-        });
-    </script>
-
 </body>
 </html>

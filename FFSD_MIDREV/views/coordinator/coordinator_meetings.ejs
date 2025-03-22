@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="/css/primary_styles.css">
 </head>
 <body>
@@ -32,6 +31,7 @@
                     <th>Time</th>
                     <th>Link</th>
                 </tr>
+                <% if (typeof meetings !== "undefined" && meetings.length > 0) { %>
                 <% meetings.forEach(meeting => { %>
                     <tr>
                         <td><%= meeting.title %></td>
@@ -40,6 +40,9 @@
                         <td><a href="<%= meeting.link %>" target="_blank">Join</a></td>
                     </tr>
                 <% }); %>
+                <% } else { %>
+                    <p>No meetings available.</p>
+                <% } %>
             </table>
 
             <div class="back-container">
